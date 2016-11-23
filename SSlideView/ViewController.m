@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong) TestViewController * test1;
 @property (nonatomic, strong) TestViewController * test2;
+@property (nonatomic, strong) SSlideTabBarView * tabBarView;
 
 @end
 
@@ -41,7 +42,9 @@
     UIScrollView *scrollView = [[self.childViewControllers objectAtIndex:index] tableView];
     return scrollView;
 }
-
+- (SSlideTabBarView *)slideTabBarViewOfSSlideView:(SSlideView *)slideView {
+    return self.tabBarView;
+}
 
 #pragma mark getter
 - (TestViewController *)test1 {
@@ -57,6 +60,13 @@
         _test2 = vc;
     }
     return _test2;
+}
+- (SSlideTabBarView *)tabBarView {
+    if (!_tabBarView) {
+        SSlideTabBarView * tabbar = [[SSlideTabBarView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 40)];
+        _tabBarView = tabbar;
+    }
+    return _tabBarView;
 }
 
 - (void)didReceiveMemoryWarning {

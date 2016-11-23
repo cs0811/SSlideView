@@ -7,15 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SSlideTabBarView.h"
 
 @class SSlideView;
 @protocol SSlideViewDelegate <NSObject>
 
 - (NSInteger)numberOfItemsInSSlideView:(SSlideView *)slideView;
 - (UIScrollView *)slideView:(SSlideView *)slideView itemAtIndex:(NSInteger)index;
-
+- (SSlideTabBarView *)slideTabBarViewOfSSlideView:(SSlideView *)slideView;
 
 @optional
+- (UIView *)headerViewOfSSlideView:(SSlideView *)slideView;
+
 
 @end
 
