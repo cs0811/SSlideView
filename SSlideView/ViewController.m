@@ -14,6 +14,8 @@
 
 @property (nonatomic, strong) TestViewController * test1;
 @property (nonatomic, strong) TestViewController * test2;
+@property (nonatomic, strong) TestViewController * test3;
+@property (nonatomic, strong) TestViewController * test4;
 @property (nonatomic, strong) SSlideTabBarView * tabBarView;
 @property (nonatomic, strong) UIView * headerView;
 
@@ -29,6 +31,8 @@
     
     [self addChildViewController:self.test1];
     [self addChildViewController:self.test2];
+    [self addChildViewController:self.test3];
+    [self addChildViewController:self.test4];
     
     SSlideView * slideView = [[SSlideView alloc] initWithFrame:self.view.frame];
     slideView.delegate = self;
@@ -64,6 +68,20 @@
         _test2 = vc;
     }
     return _test2;
+}
+- (TestViewController *)test3 {
+    if (!_test3) {
+        TestViewController * vc = [TestViewController new];
+        _test3 = vc;
+    }
+    return _test3;
+}
+- (TestViewController *)test4 {
+    if (!_test4) {
+        TestViewController * vc = [TestViewController new];
+        _test4 = vc;
+    }
+    return _test4;
 }
 - (SSlideTabBarView *)tabBarView {
     if (!_tabBarView) {

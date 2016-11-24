@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 
 @property (nonatomic, assign) CGFloat tableInsetHeight;
 @property (nonatomic, assign) BOOL tabBarHasStatic;
+@property (nonatomic, assign) BOOL animationCompleted;
 @end
 
 @implementation SSlideView
@@ -57,7 +58,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.itemsArr = [NSMutableArray array];
     self.currentScrollView = self.itemsArr.firstObject;
     self.tabBarHasStatic = NO;
-    
+    self.animationCompleted = YES;
 }
 
 #pragma mark UICollectionViewDataSource 
@@ -122,6 +123,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self updateAllItemOffY:self.currentScrollView.contentOffset.y];
         [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
     }
+    self.animationCompleted = NO;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -129,17 +131,18 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (_currentIndex >= self.itemsArr.count) {
         return;
     }
+    if (scrollView.isDragging) {
+        // 拖拽结束才计算
+        return;
+    }
     self.currentScrollView = self.itemsArr[self.currentIndex];
     if (!self.tabBarHasStatic) {
         [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
-    }else {
-        if (!self.currentScrollView.tabBarHasStatic) {
-            [self.currentScrollView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
-        }
     }
+    self.animationCompleted = YES;
 }
 
-#pragma mark
+#pragma mark update
 - (void)updateAllItemOffY:(CGFloat)offy {
     for (UIScrollView * tempScrollView in self.itemsArr) {
         if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]] || tempScrollView == self.currentScrollView) {
@@ -192,6 +195,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     CGFloat offY = point.y;
     
     if (offY >= -CGRectGetHeight(self.tabBarView.frame)) {
+        // 悬停
         self.tabBarHasStatic = YES;
         self.currentScrollView.tabBarHasStatic = YES;
         
@@ -202,8 +206,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         CGRect frame = self.tabBarView.frame;
         frame.origin.y = 0;
         self.tabBarView.frame = frame;
+        [self updateAllItemOffY:-CGRectGetHeight(self.tabBarView.frame)];
+        
     }else {
-        if (self.tabBarView.superview == self) {
+        if (self.tabBarView.superview == self && self.animationCompleted) {
             [self scrollViewDidEndDecelerating:self.collectionView];
         }
         self.tabBarHasStatic = NO;

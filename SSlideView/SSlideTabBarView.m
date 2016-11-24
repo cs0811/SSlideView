@@ -27,6 +27,7 @@
 
 #pragma mark loadBaseUI
 - (void)loadBaseUI {
+    self.backgroundColor = [UIColor orangeColor];
     [self addSubview:self.titleLabel];
     self.titleLabel.frame = self.selfFrame;
     
