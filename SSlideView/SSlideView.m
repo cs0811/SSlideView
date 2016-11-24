@@ -47,6 +47,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 - (void)loadData {
     self.itemsArr = [NSMutableArray array];
+    self.currentScrollView = self.itemsArr.firstObject;
 }
 
 #pragma mark UICollectionViewDataSource 
@@ -83,6 +84,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         if (indexPath.item == 0) {
             // 第一个scrollview 手动加上头视图
             [self scrollViewDidEndDecelerating:self.collectionView];
+        }else {
+            // 保证第一次出现的item的contentOffset和上一个一样
+            [cell.tableView setContentOffset:self.currentScrollView.contentOffset animated:NO];
         }
     }
     
@@ -98,6 +102,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (_currentIndex >= self.itemsArr.count) {
         return;
     }
+    self.currentScrollView = self.itemsArr[self.currentIndex];
+    [self updateAllItemOffY:self.currentScrollView.contentOffset.y];
     [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -105,17 +111,26 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (_currentIndex >= self.itemsArr.count) {
         return;
     }
+    self.currentScrollView = self.itemsArr[self.currentIndex];
     [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
 }
 
 #pragma mark
+- (void)updateAllItemOffY:(CGFloat)offy {
+    for (UIScrollView * tempScrollView in self.itemsArr) {
+        if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]] || tempScrollView == self.currentScrollView) {
+            continue;
+        }
+        [tempScrollView setContentOffset:CGPointMake(0, offy) animated:NO];
+    }
+}
+
 - (void)UpdateHeaderAndTabBarViewForType:(SlideViewScrollStatus)type {
     
     if (self.collectionView.decelerating) {
         return;
     }
     
-    self.currentScrollView = self.itemsArr[self.currentIndex];
     if (![self.currentScrollView isKindOfClass:[UIScrollView class]]) {
         return;
     }
@@ -124,8 +139,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self addSubview:self.headerView];
         [self addSubview:self.tabBarView];
 
+        CGFloat offY = self.tableInsetHeight+self.currentScrollView.contentOffset.y;
+        
         CGRect frame = self.headerView.frame;
-        self.headerView.frame = (CGRect){0, 0, frame.size.width, frame.size.height};
+        self.headerView.frame = (CGRect){0, -offY, frame.size.width, frame.size.height};
         frame = self.tabBarView.frame;
         self.tabBarView.frame = (CGRect){0, CGRectGetMaxY(self.headerView.frame), frame.size.width, frame.size.height};
         
@@ -137,8 +154,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         self.tabBarView.frame = (CGRect){0, -frame.size.height, frame.size.width, frame.size.height};
         frame = self.headerView.frame;
         self.headerView.frame = (CGRect){0, -self.tableInsetHeight, frame.size.width, frame.size.height};
-    }
+    }    
 }
+
 
 #pragma mark getter
 - (UICollectionView *)collectionView {
@@ -162,13 +180,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 - (void)setHeaderView:(UIView *)headerView {
     _headerView = headerView;
-    _headerView.frame = headerView.bounds;
     self.tableInsetHeight += CGRectGetHeight(_headerView.frame);
 }
 - (void)setTabBarView:(SSlideTabBarView *)tabBarView {
     _tabBarView = tabBarView;
-    CGRect frame = tabBarView.bounds;
-    _tabBarView.frame = (CGRect){0, CGRectGetMaxY(self.headerView.frame), frame.size.width, frame.size.height};
     self.tableInsetHeight += CGRectGetHeight(_tabBarView.frame);
 }
 
