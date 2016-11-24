@@ -17,7 +17,7 @@
 - (SSlideTabBarView *)slideTabBarViewOfSSlideView:(SSlideView *)slideView;
 
 @optional
-- (UIView *)headerViewOfSSlideView:(SSlideView *)slideView;
+- (UIView *)slideHeaderViewOfSSlideView:(SSlideView *)slideView;
 
 
 @end

@@ -69,11 +69,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     
     self.tableInsetHeight = 0;
     
+    if ([self.delegate respondsToSelector:@selector(slideHeaderViewOfSSlideView:)]) {
+        self.headerView = [self.delegate slideHeaderViewOfSSlideView:self];
+    }
     if ([self.delegate respondsToSelector:@selector(slideTabBarViewOfSSlideView:)]) {
         self.tabBarView = [self.delegate slideTabBarViewOfSSlideView:self];
-    }
-    if ([self.delegate respondsToSelector:@selector(headerViewOfSSlideView:)]) {
-        self.headerView = [self.delegate headerViewOfSSlideView:self];
     }
     if ([self.delegate respondsToSelector:@selector(slideView:itemAtIndex:)]) {
         cell.tableView = (UITableView *)[self.delegate slideView:self itemAtIndex:indexPath.item];
@@ -111,6 +111,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 #pragma mark
 - (void)UpdateHeaderAndTabBarViewForType:(SlideViewScrollStatus)type {
     
+    if (self.collectionView.decelerating) {
+        return;
+    }
+    
     self.currentScrollView = self.itemsArr[self.currentIndex];
     if (![self.currentScrollView isKindOfClass:[UIScrollView class]]) {
         return;
@@ -119,16 +123,21 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (type == SlideViewScrollStatus_Begin) {
         [self addSubview:self.headerView];
         [self addSubview:self.tabBarView];
-        [self bringSubviewToFront:self.headerView];
-        [self bringSubviewToFront:self.tabBarView];
+
+        CGRect frame = self.headerView.frame;
+        self.headerView.frame = (CGRect){0, 0, frame.size.width, frame.size.height};
+        frame = self.tabBarView.frame;
+        self.tabBarView.frame = (CGRect){0, CGRectGetMaxY(self.headerView.frame), frame.size.width, frame.size.height};
+        
     }else if (type == SlideViewScrollStatus_End) {
         [self.currentScrollView addSubview:self.headerView];
         [self.currentScrollView addSubview:self.tabBarView];
+        
+        CGRect frame = self.tabBarView.frame;
+        self.tabBarView.frame = (CGRect){0, -frame.size.height, frame.size.width, frame.size.height};
+        frame = self.headerView.frame;
+        self.headerView.frame = (CGRect){0, -self.tableInsetHeight, frame.size.width, frame.size.height};
     }
-    CGRect frame = self.tabBarView.frame;
-    self.tabBarView.frame = (CGRect){0, -frame.size.height, frame.size.width, frame.size.height};
-    frame = self.headerView.frame;
-    self.headerView.frame = (CGRect){0, -self.tableInsetHeight, frame.size.width, frame.size.height};
 }
 
 #pragma mark getter
@@ -158,7 +167,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 - (void)setTabBarView:(SSlideTabBarView *)tabBarView {
     _tabBarView = tabBarView;
-    _tabBarView.frame = tabBarView.bounds;
+    CGRect frame = tabBarView.bounds;
+    _tabBarView.frame = (CGRect){0, CGRectGetMaxY(self.headerView.frame), frame.size.width, frame.size.height};
     self.tableInsetHeight += CGRectGetHeight(_tabBarView.frame);
 }
 

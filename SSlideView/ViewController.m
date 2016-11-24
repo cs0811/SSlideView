@@ -15,6 +15,7 @@
 @property (nonatomic, strong) TestViewController * test1;
 @property (nonatomic, strong) TestViewController * test2;
 @property (nonatomic, strong) SSlideTabBarView * tabBarView;
+@property (nonatomic, strong) UIView * headerView;
 
 @end
 
@@ -45,6 +46,9 @@
 - (SSlideTabBarView *)slideTabBarViewOfSSlideView:(SSlideView *)slideView {
     return self.tabBarView;
 }
+- (UIView *)slideHeaderViewOfSSlideView:(SSlideView *)slideView {
+    return self.headerView;
+}
 
 #pragma mark getter
 - (TestViewController *)test1 {
@@ -67,6 +71,15 @@
         _tabBarView = tabbar;
     }
     return _tabBarView;
+}
+- (UIView *)headerView {
+    if (!_headerView) {
+        UIView * view = [UIView new];
+        view.backgroundColor = [UIColor cyanColor];
+        view.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 120);
+        _headerView = view;
+    }
+    return _headerView;
 }
 
 - (void)didReceiveMemoryWarning {
