@@ -8,6 +8,9 @@
 
 #import "SSlideView.h"
 #import "SSlideViewCollectionCell.h"
+#import "UIScrollView+SSlideViewAddition.h"
+
+#define kContentOffset      @"contentOffset"
 
 typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     SlideViewScrollStatus_Begin = 0,    // 开始滚动
@@ -26,6 +29,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 @property (nonatomic, strong) NSMutableArray * itemsArr;
 
 @property (nonatomic, assign) CGFloat tableInsetHeight;
+@property (nonatomic, assign) BOOL tabBarHasStatic;
 @end
 
 @implementation SSlideView
@@ -40,6 +44,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     return self;
 }
 
+- (void)dealloc {
+    [self removeItemsObserver];
+}
+
 #pragma mark loadBaseUI 
 - (void)loadBaseUI {
     self.backgroundColor = [UIColor whiteColor];
@@ -48,6 +56,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 - (void)loadData {
     self.itemsArr = [NSMutableArray array];
     self.currentScrollView = self.itemsArr.firstObject;
+    self.tabBarHasStatic = NO;
+    
 }
 
 #pragma mark UICollectionViewDataSource 
@@ -79,6 +89,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if ([self.delegate respondsToSelector:@selector(slideView:itemAtIndex:)]) {
         cell.tableView = (UITableView *)[self.delegate slideView:self itemAtIndex:indexPath.item];
         cell.tableView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
+        [cell.tableView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
         [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.tableView];
         
         if (indexPath.item == 0) {
@@ -86,7 +97,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
             [self scrollViewDidEndDecelerating:self.collectionView];
         }else {
             // 保证第一次出现的item的contentOffset和上一个一样
-            [cell.tableView setContentOffset:self.currentScrollView.contentOffset animated:NO];
+            if (self.tabBarHasStatic) {
+                [cell.tableView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
+            }else {
+                [cell.tableView setContentOffset:self.currentScrollView.contentOffset animated:NO];
+            }
         }
     }
     
@@ -103,16 +118,25 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         return;
     }
     self.currentScrollView = self.itemsArr[self.currentIndex];
-    [self updateAllItemOffY:self.currentScrollView.contentOffset.y];
-    [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
+    if (!self.tabBarHasStatic) {
+        [self updateAllItemOffY:self.currentScrollView.contentOffset.y];
+        [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
+    }
 }
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     _currentIndex = scrollView.contentOffset.x/CGRectGetWidth(scrollView.frame);
     if (_currentIndex >= self.itemsArr.count) {
         return;
     }
     self.currentScrollView = self.itemsArr[self.currentIndex];
-    [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
+    if (!self.tabBarHasStatic) {
+        [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
+    }else {
+        if (!self.currentScrollView.tabBarHasStatic) {
+            [self.currentScrollView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
+        }
+    }
 }
 
 #pragma mark
@@ -155,6 +179,46 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         frame = self.headerView.frame;
         self.headerView.frame = (CGRect){0, -self.tableInsetHeight, frame.size.width, frame.size.height};
     }    
+}
+
+#pragma mark KVO
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    
+    if (![keyPath isEqual:kContentOffset]) {
+        return;
+    }
+    
+    CGPoint point = [change[@"new"] CGPointValue];
+    CGFloat offY = point.y;
+    
+    if (offY >= -CGRectGetHeight(self.tabBarView.frame)) {
+        self.tabBarHasStatic = YES;
+        self.currentScrollView.tabBarHasStatic = YES;
+        
+        if (self.tabBarView.superview == self) {
+            return;
+        }
+        [self addSubview:self.tabBarView];
+        CGRect frame = self.tabBarView.frame;
+        frame.origin.y = 0;
+        self.tabBarView.frame = frame;
+    }else {
+        if (self.tabBarView.superview == self) {
+            [self scrollViewDidEndDecelerating:self.collectionView];
+        }
+        self.tabBarHasStatic = NO;
+        self.currentScrollView.tabBarHasStatic = NO;
+    }
+}
+
+// 移除监听
+- (void)removeItemsObserver {
+    for (UIScrollView * tempScrollView in self.itemsArr) {
+        if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]] || tempScrollView == self.currentScrollView) {
+            continue;
+        }
+        [tempScrollView removeObserver:self forKeyPath:kContentOffset];
+    }
 }
 
 
