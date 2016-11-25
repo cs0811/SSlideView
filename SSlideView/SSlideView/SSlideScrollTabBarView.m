@@ -18,6 +18,7 @@
 @interface SSlideScrollTabBarView ()<UIScrollViewDelegate>
 @property (nonatomic, strong) UIScrollView * scroll;
 @property (nonatomic, strong) NSMutableArray * titleArr;
+@property (nonatomic, strong) UIView * lineView;
 @end
 
 @implementation SSlideScrollTabBarView
@@ -32,8 +33,11 @@
 
 #pragma mark loadUI
 - (void)loadUI {
+    self.backgroundColor = [UIColor whiteColor];
     [self addSubview:self.scroll];
     self.scroll.frame = self.frame;
+    [self addSubview:self.lineView];
+    self.lineView.frame = CGRectMake(0, CGRectGetHeight(self.frame)-0.5, CGRectGetWidth(self.frame), 0.5);
     
     _countOfTitleMiddleUnAble = 1;
 }
@@ -124,12 +128,19 @@
 - (UIScrollView *)scroll {
     if (!_scroll) {
         UIScrollView * view = [UIScrollView new];
-        view.backgroundColor = [UIColor orangeColor];
         view.showsHorizontalScrollIndicator = NO;
         view.delegate = self;
         _scroll = view;
     }
     return _scroll;
+}
+- (UIView *)lineView {
+    if (!_lineView) {
+        UIView * view = [UIView new];
+        view.backgroundColor = [UIColor lightGrayColor];
+        _lineView = view;
+    }
+    return _lineView;
 }
 
 @end

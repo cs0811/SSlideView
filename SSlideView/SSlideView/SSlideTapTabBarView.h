@@ -10,4 +10,11 @@
 
 @interface SSlideTapTabBarView : SSlideTabBarView
 
+@property (nonatomic, strong) UIColor * unSelectedTitleColor;
+@property (nonatomic, strong) UIColor * selectedTitleColor;
+@property (nonatomic, strong) UIFont * titleFont;
+
+
+- (void)loadDataWithArr:(NSArray *)arr;
+
 @end

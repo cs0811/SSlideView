@@ -9,8 +9,8 @@
 #import "ViewController.h"
 #import "SSlideView.h"
 #import "TestViewController.h"
-#import "TestTabBarView.h"
 #import "SSlideScrollTabBarView.h"
+#import "SSlideTapTabBarView.h"
 
 @interface ViewController ()<SSlideViewDelegate>
 
@@ -18,7 +18,7 @@
 @property (nonatomic, strong) TestViewController * test2;
 @property (nonatomic, strong) TestViewController * test3;
 @property (nonatomic, strong) TestViewController * test4;
-@property (nonatomic, strong) SSlideScrollTabBarView * tabBarView;
+@property (nonatomic, strong) SSlideTapTabBarView * tabBarView;
 @property (nonatomic, strong) UIView * headerView;
 
 @end
@@ -87,9 +87,9 @@
     }
     return _test4;
 }
-- (SSlideScrollTabBarView *)tabBarView {
+- (SSlideTapTabBarView *)tabBarView {
     if (!_tabBarView) {
-        SSlideScrollTabBarView * tabbar = [[SSlideScrollTabBarView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 40)];
+        SSlideTapTabBarView * tabbar = [[SSlideTapTabBarView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 40)];
         _tabBarView = tabbar;
     }
     return _tabBarView;
