@@ -25,6 +25,12 @@
 
 @interface SSlideView : UIView
 
+
+/**
+ 是否在最顶部刷新       (默认 YES)
+ */
+@property (nonatomic, assign) BOOL refreshAtTabBarViewTop;
+
 @property (nonatomic, weak) id<SSlideViewDelegate> delegate;
 
 @end

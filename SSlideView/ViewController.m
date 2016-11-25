@@ -40,6 +40,7 @@
     
     SSlideView * slideView = [[SSlideView alloc] initWithFrame:self.view.frame];
     slideView.delegate = self;
+    slideView.refreshAtTabBarViewTop = NO;
     [self.view addSubview:slideView];
 }
 

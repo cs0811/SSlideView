@@ -63,6 +63,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.tabBarHasStatic = NO;
     self.animationCompleted = YES;
     self.loadFirst = YES;
+    self.refreshAtTabBarViewTop = YES;
 }
 
 #pragma mark UICollectionViewDataSource 
@@ -259,8 +260,13 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self updateAllItemOffY:-CGRectGetHeight(self.tabBarView.frame)];
         
     }else {
-        if (self.tabBarView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
-            [self scrollViewDidEndDecelerating:self.collectionView];
+        
+        if (offY<=0 && !self.refreshAtTabBarViewTop) {
+            
+        }else {
+            if (self.tabBarView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
+                [self scrollViewDidEndDecelerating:self.collectionView];
+            }
         }
         self.tabBarHasStatic = NO;
     }
