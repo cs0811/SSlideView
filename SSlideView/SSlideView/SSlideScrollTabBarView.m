@@ -1,12 +1,12 @@
 //
-//  TestTabBarView.m
+//  SSlideScrollTabBarView.m
 //  SSlideView
 //
 //  Created by tongxuan on 16/11/25.
 //  Copyright © 2016年 tongxuan. All rights reserved.
 //
 
-#import "TestTabBarView.h"
+#import "SSlideScrollTabBarView.h"
 
 #define kLeftSpace      10.
 #define kRightSpace     10.
@@ -15,12 +15,12 @@
 
 #define kTag            1024
 
-@interface TestTabBarView ()<UIScrollViewDelegate>
+@interface SSlideScrollTabBarView ()<UIScrollViewDelegate>
 @property (nonatomic, strong) UIScrollView * scroll;
 @property (nonatomic, strong) NSMutableArray * titleArr;
 @end
 
-@implementation TestTabBarView
+@implementation SSlideScrollTabBarView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -35,20 +35,21 @@
     [self addSubview:self.scroll];
     self.scroll.frame = self.frame;
     
+    _countOfTitleMiddleUnAble = 1;
 }
 
 - (void)loadDataWithArr:(NSArray *)arr {
     self.titleArr = [NSMutableArray arrayWithCapacity:arr.count];
-
+    
     UIView * lastView = nil;
     for (int i=0; i<arr.count; i++) {
         UIButton * btn = [UIButton buttonWithType:UIButtonTypeCustom];
         NSString * title = arr[i];
         [btn setTitle:title forState:UIControlStateNormal];
-        btn.titleLabel.font = [UIFont systemFontOfSize:14.];
+        btn.titleLabel.font = _titleFont?:[UIFont systemFontOfSize:14.];
         btn.selected = NO;
-        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [btn setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
+        [btn setTitleColor:_unSelectedTitleColor?:[UIColor blackColor] forState:UIControlStateNormal];
+        [btn setTitleColor:_selectedTitleColor?:[UIColor redColor] forState:UIControlStateSelected];
         [btn addTarget:self action:@selector(titleClick:) forControlEvents:UIControlEventTouchUpInside];
         btn.tag = kTag+i;
         [self.scroll addSubview:btn];
@@ -70,9 +71,8 @@
     self.scroll.contentSize = CGSizeMake(CGRectGetMaxX(lastView.frame)+kRightSpace, self.frame.size.height);
 }
 
-#pragma mark UIScrollViewDelegate 
+#pragma mark UIScrollViewDelegate
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-
 }
 
 #pragma mark Action
@@ -98,10 +98,10 @@
 
 - (void)middleTitleAtIndex:(NSInteger)index {
     
-    if (index<1) {
+    if (index<_countOfTitleMiddleUnAble) {
         return;
     }
-    if (index>self.titleArr.count-1-1) {
+    if (index>self.titleArr.count-1-_countOfTitleMiddleUnAble) {
         return;
     }
     
@@ -125,6 +125,7 @@
     if (!_scroll) {
         UIScrollView * view = [UIScrollView new];
         view.backgroundColor = [UIColor orangeColor];
+        view.showsHorizontalScrollIndicator = NO;
         view.delegate = self;
         _scroll = view;
     }

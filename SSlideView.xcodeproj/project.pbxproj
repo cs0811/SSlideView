@@ -13,11 +13,13 @@
 		D4768BCC1DE5372800078C32 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4768BCA1DE5372800078C32 /* Main.storyboard */; };
 		D4768BCE1DE5372800078C32 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4768BCD1DE5372800078C32 /* Assets.xcassets */; };
 		D4768BD11DE5372800078C32 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4768BCF1DE5372800078C32 /* LaunchScreen.storyboard */; };
-		D4768BDA1DE5376000078C32 /* SSlideView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4768BD91DE5376000078C32 /* SSlideView.m */; };
-		D4768BDD1DE539D200078C32 /* SSlideViewCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D4768BDC1DE539D200078C32 /* SSlideViewCollectionCell.m */; };
 		D4768BE31DE53C9A00078C32 /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4768BE21DE53C9A00078C32 /* TestViewController.m */; };
-		D4768BE61DE5494100078C32 /* SSlideTabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4768BE51DE5494100078C32 /* SSlideTabBarView.m */; };
 		D4D80FBA1DE7E92E0070A570 /* TestTabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FB91DE7E92E0070A570 /* TestTabBarView.m */; };
+		D4D80FCC1DE860DC0070A570 /* SSlideScrollTabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FC31DE860DC0070A570 /* SSlideScrollTabBarView.m */; };
+		D4D80FCD1DE860DC0070A570 /* SSlideTabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FC51DE860DC0070A570 /* SSlideTabBarView.m */; };
+		D4D80FCE1DE860DC0070A570 /* SSlideTapTabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FC71DE860DC0070A570 /* SSlideTapTabBarView.m */; };
+		D4D80FCF1DE860DC0070A570 /* SSlideView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FC91DE860DC0070A570 /* SSlideView.m */; };
+		D4D80FD01DE860DC0070A570 /* SSlideViewCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FCB1DE860DC0070A570 /* SSlideViewCollectionCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,16 +33,20 @@
 		D4768BCD1DE5372800078C32 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D4768BD01DE5372800078C32 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D4768BD21DE5372800078C32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D4768BD81DE5376000078C32 /* SSlideView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSlideView.h; sourceTree = "<group>"; };
-		D4768BD91DE5376000078C32 /* SSlideView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideView.m; sourceTree = "<group>"; };
-		D4768BDB1DE539D200078C32 /* SSlideViewCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSlideViewCollectionCell.h; sourceTree = "<group>"; };
-		D4768BDC1DE539D200078C32 /* SSlideViewCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideViewCollectionCell.m; sourceTree = "<group>"; };
 		D4768BE11DE53C9A00078C32 /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
 		D4768BE21DE53C9A00078C32 /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
-		D4768BE41DE5494100078C32 /* SSlideTabBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSlideTabBarView.h; sourceTree = "<group>"; };
-		D4768BE51DE5494100078C32 /* SSlideTabBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideTabBarView.m; sourceTree = "<group>"; };
 		D4D80FB81DE7E92E0070A570 /* TestTabBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTabBarView.h; sourceTree = "<group>"; };
 		D4D80FB91DE7E92E0070A570 /* TestTabBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTabBarView.m; sourceTree = "<group>"; };
+		D4D80FC21DE860DC0070A570 /* SSlideScrollTabBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSlideScrollTabBarView.h; sourceTree = "<group>"; };
+		D4D80FC31DE860DC0070A570 /* SSlideScrollTabBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideScrollTabBarView.m; sourceTree = "<group>"; };
+		D4D80FC41DE860DC0070A570 /* SSlideTabBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSlideTabBarView.h; sourceTree = "<group>"; };
+		D4D80FC51DE860DC0070A570 /* SSlideTabBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideTabBarView.m; sourceTree = "<group>"; };
+		D4D80FC61DE860DC0070A570 /* SSlideTapTabBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSlideTapTabBarView.h; sourceTree = "<group>"; };
+		D4D80FC71DE860DC0070A570 /* SSlideTapTabBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideTapTabBarView.m; sourceTree = "<group>"; };
+		D4D80FC81DE860DC0070A570 /* SSlideView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSlideView.h; sourceTree = "<group>"; };
+		D4D80FC91DE860DC0070A570 /* SSlideView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideView.m; sourceTree = "<group>"; };
+		D4D80FCA1DE860DC0070A570 /* SSlideViewCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSlideViewCollectionCell.h; sourceTree = "<group>"; };
+		D4D80FCB1DE860DC0070A570 /* SSlideViewCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideViewCollectionCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,17 +87,12 @@
 				D4768BE21DE53C9A00078C32 /* TestViewController.m */,
 				D4D80FB81DE7E92E0070A570 /* TestTabBarView.h */,
 				D4D80FB91DE7E92E0070A570 /* TestTabBarView.m */,
+				D4D80FC11DE860DC0070A570 /* SSlideView */,
 				D4768BCA1DE5372800078C32 /* Main.storyboard */,
 				D4768BCD1DE5372800078C32 /* Assets.xcassets */,
 				D4768BCF1DE5372800078C32 /* LaunchScreen.storyboard */,
 				D4768BD21DE5372800078C32 /* Info.plist */,
 				D4768BC11DE5372800078C32 /* Supporting Files */,
-				D4768BD81DE5376000078C32 /* SSlideView.h */,
-				D4768BD91DE5376000078C32 /* SSlideView.m */,
-				D4768BDB1DE539D200078C32 /* SSlideViewCollectionCell.h */,
-				D4768BDC1DE539D200078C32 /* SSlideViewCollectionCell.m */,
-				D4768BE41DE5494100078C32 /* SSlideTabBarView.h */,
-				D4768BE51DE5494100078C32 /* SSlideTabBarView.m */,
 			);
 			path = SSlideView;
 			sourceTree = "<group>";
@@ -102,6 +103,23 @@
 				D4768BC21DE5372800078C32 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D4D80FC11DE860DC0070A570 /* SSlideView */ = {
+			isa = PBXGroup;
+			children = (
+				D4D80FC81DE860DC0070A570 /* SSlideView.h */,
+				D4D80FC91DE860DC0070A570 /* SSlideView.m */,
+				D4D80FCA1DE860DC0070A570 /* SSlideViewCollectionCell.h */,
+				D4D80FCB1DE860DC0070A570 /* SSlideViewCollectionCell.m */,
+				D4D80FC41DE860DC0070A570 /* SSlideTabBarView.h */,
+				D4D80FC51DE860DC0070A570 /* SSlideTabBarView.m */,
+				D4D80FC21DE860DC0070A570 /* SSlideScrollTabBarView.h */,
+				D4D80FC31DE860DC0070A570 /* SSlideScrollTabBarView.m */,
+				D4D80FC61DE860DC0070A570 /* SSlideTapTabBarView.h */,
+				D4D80FC71DE860DC0070A570 /* SSlideTapTabBarView.m */,
+			);
+			path = SSlideView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -175,12 +193,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4D80FD01DE860DC0070A570 /* SSlideViewCollectionCell.m in Sources */,
+				D4D80FCE1DE860DC0070A570 /* SSlideTapTabBarView.m in Sources */,
 				D4768BE31DE53C9A00078C32 /* TestViewController.m in Sources */,
-				D4768BDD1DE539D200078C32 /* SSlideViewCollectionCell.m in Sources */,
+				D4D80FCC1DE860DC0070A570 /* SSlideScrollTabBarView.m in Sources */,
+				D4D80FCF1DE860DC0070A570 /* SSlideView.m in Sources */,
 				D4768BC91DE5372800078C32 /* ViewController.m in Sources */,
 				D4768BC61DE5372800078C32 /* AppDelegate.m in Sources */,
-				D4768BE61DE5494100078C32 /* SSlideTabBarView.m in Sources */,
-				D4768BDA1DE5376000078C32 /* SSlideView.m in Sources */,
+				D4D80FCD1DE860DC0070A570 /* SSlideTabBarView.m in Sources */,
 				D4D80FBA1DE7E92E0070A570 /* TestTabBarView.m in Sources */,
 				D4768BC31DE5372800078C32 /* main.m in Sources */,
 			);
