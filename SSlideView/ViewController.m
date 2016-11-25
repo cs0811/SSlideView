@@ -35,7 +35,7 @@
     [self addChildViewController:self.test3];
     [self addChildViewController:self.test4];
     
-    [self.tabBarView loadDataWithArr:@[@"测试",@"哈哈哈",@"不是",@"你说"]];
+    [self.tabBarView loadDataWithArr:@[@"测试sdfsdfwesf",@"哈哈哈wefsfwewwe",@"不是sdfweewwer",@"你说sfwevfwefe"]];
     
     SSlideView * slideView = [[SSlideView alloc] initWithFrame:self.view.frame];
     slideView.delegate = self;

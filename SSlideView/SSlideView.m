@@ -287,4 +287,14 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.tableInsetHeight += CGRectGetHeight(_tabBarView.frame);
 }
 
+//- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+//    if (CGRectContainsPoint(self.headerView.frame, point)) {
+//        return  nil;
+//    }
+//    if (CGRectContainsPoint(self.tabBarView.frame, point)) {
+//        return  nil;
+//    }
+//    return [super hitTest:point withEvent:event];
+//}
+
 @end

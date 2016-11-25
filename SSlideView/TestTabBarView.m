@@ -8,7 +8,7 @@
 
 #import "TestTabBarView.h"
 
-#define kWidth      60.
+#define kWidth      120.
 
 #define kLeftSpace      10.
 #define kRightSpace     10.
@@ -70,8 +70,7 @@
 
 #pragma mark UIScrollViewDelegate 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    NSInteger index = scrollView.contentOffset.y/(kLeftSpace);
-    [self slideViewScrollToIndex:index];
+
 }
 
 #pragma mark Action
