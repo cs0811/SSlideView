@@ -7,6 +7,7 @@
 //
 
 #import "TestViewController.h"
+#import "MJRefresh.h"
 
 @interface TestViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -23,6 +24,19 @@
 
 - (void)loadUI {
     [self.view addSubview:self.tableView];
+    
+    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        
+        [self performSelector:@selector(cancelRefreh) withObject:nil afterDelay:1];
+        
+    }];
+//    self.tableView.mj_header.ignoredScrollViewContentInsetTop = 160;
+    [self.tableView.mj_header layoutSubviews];
+
+}
+
+- (void)cancelRefreh {
+    [self.tableView.mj_header endRefreshing];
 }
 
 #pragma mark UITableViewDataSource

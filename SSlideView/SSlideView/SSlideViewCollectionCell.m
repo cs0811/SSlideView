@@ -9,13 +9,12 @@
 #import "SSlideViewCollectionCell.h"
 
 @interface SSlideViewCollectionCell ()
-
 @end
 
 @implementation SSlideViewCollectionCell
 
-- (instancetype)init {
-    self = [super init];
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
     if (self) {
         [self loadBaseUI];
     }
@@ -31,7 +30,11 @@
 - (void)setTableView:(UITableView *)tableView {
     tableView.frame = self.bounds;
     _tableView = tableView;
-    [self addSubview:_tableView];
+}
+- (void)setTableBaseView:(UIView *)tableBaseView {
+    tableBaseView.frame = self.bounds;
+    _tableBaseView = tableBaseView;
+    [self addSubview:_tableBaseView];
 }
 
 @end

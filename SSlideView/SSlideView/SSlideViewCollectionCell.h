@@ -14,4 +14,6 @@ static NSString * kSSlideViewCollectionCell = @"SSlideViewCollectionCell";
 
 @property (nonatomic, strong) UITableView * tableView;
 
+@property (nonatomic, strong) UIView * tableBaseView;
+
 @end

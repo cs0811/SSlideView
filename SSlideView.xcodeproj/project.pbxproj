@@ -19,9 +19,12 @@
 		D4D80FCE1DE860DC0070A570 /* SSlideTapTabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FC71DE860DC0070A570 /* SSlideTapTabBarView.m */; };
 		D4D80FCF1DE860DC0070A570 /* SSlideView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FC91DE860DC0070A570 /* SSlideView.m */; };
 		D4D80FD01DE860DC0070A570 /* SSlideViewCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FCB1DE860DC0070A570 /* SSlideViewCollectionCell.m */; };
+		F79514D2A7CA6ED29F83DBE9 /* libPods-SSlideView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAFEBC4C823CFFD5BBDE84A9 /* libPods-SSlideView.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		51B6B60AB28701737A2F5B48 /* Pods-SSlideView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SSlideView.release.xcconfig"; path = "Pods/Target Support Files/Pods-SSlideView/Pods-SSlideView.release.xcconfig"; sourceTree = "<group>"; };
+		C28868754397AB2AC5FB0CD6 /* Pods-SSlideView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SSlideView.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SSlideView/Pods-SSlideView.debug.xcconfig"; sourceTree = "<group>"; };
 		D4768BBE1DE5372800078C32 /* SSlideView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SSlideView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4768BC21DE5372800078C32 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D4768BC41DE5372800078C32 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -44,6 +47,7 @@
 		D4D80FC91DE860DC0070A570 /* SSlideView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideView.m; sourceTree = "<group>"; };
 		D4D80FCA1DE860DC0070A570 /* SSlideViewCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSlideViewCollectionCell.h; sourceTree = "<group>"; };
 		D4D80FCB1DE860DC0070A570 /* SSlideViewCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideViewCollectionCell.m; sourceTree = "<group>"; };
+		DAFEBC4C823CFFD5BBDE84A9 /* libPods-SSlideView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SSlideView.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,17 +55,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F79514D2A7CA6ED29F83DBE9 /* libPods-SSlideView.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3C91911C8F3C2206B834AD80 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C28868754397AB2AC5FB0CD6 /* Pods-SSlideView.debug.xcconfig */,
+				51B6B60AB28701737A2F5B48 /* Pods-SSlideView.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		4CA7C6523294A28A18EF78AE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DAFEBC4C823CFFD5BBDE84A9 /* libPods-SSlideView.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D4768BB51DE5372800078C32 = {
 			isa = PBXGroup;
 			children = (
 				D4768BC01DE5372800078C32 /* SSlideView */,
 				D4768BBF1DE5372800078C32 /* Products */,
+				3C91911C8F3C2206B834AD80 /* Pods */,
+				4CA7C6523294A28A18EF78AE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -124,9 +148,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D4768BD51DE5372800078C32 /* Build configuration list for PBXNativeTarget "SSlideView" */;
 			buildPhases = (
+				89FD15E1021EE1EBA97648FB /* [CP] Check Pods Manifest.lock */,
 				D4768BBA1DE5372800078C32 /* Sources */,
 				D4768BBB1DE5372800078C32 /* Frameworks */,
 				D4768BBC1DE5372800078C32 /* Resources */,
+				7B55B3386D1EECCCFFD51200 /* [CP] Embed Pods Frameworks */,
+				AEC7718547856E7536D50D07 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -182,6 +209,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7B55B3386D1EECCCFFD51200 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SSlideView/Pods-SSlideView-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		89FD15E1021EE1EBA97648FB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		AEC7718547856E7536D50D07 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SSlideView/Pods-SSlideView-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D4768BBA1DE5372800078C32 /* Sources */ = {
@@ -312,6 +387,7 @@
 		};
 		D4768BD61DE5372800078C32 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C28868754397AB2AC5FB0CD6 /* Pods-SSlideView.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = SSlideView/Info.plist;
@@ -323,6 +399,7 @@
 		};
 		D4768BD71DE5372800078C32 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51B6B60AB28701737A2F5B48 /* Pods-SSlideView.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = SSlideView/Info.plist;

@@ -92,6 +92,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if ([self.delegate respondsToSelector:@selector(slideTabBarViewOfSSlideView:)]) {
         self.tabBarView = [self.delegate slideTabBarViewOfSSlideView:self];
     }
+    if ([self.delegate respondsToSelector:@selector(slideView:itemViewAtIndex:)]) {
+        cell.tableBaseView = [self.delegate slideView:self itemViewAtIndex:indexPath.item];
+    }
     if ([self.delegate respondsToSelector:@selector(slideView:itemAtIndex:)]) {
         cell.tableView = (UITableView *)[self.delegate slideView:self itemAtIndex:indexPath.item];
         cell.tableView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
