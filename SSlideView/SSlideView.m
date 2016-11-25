@@ -8,7 +8,6 @@
 
 #import "SSlideView.h"
 #import "SSlideViewCollectionCell.h"
-#import "UIScrollView+SSlideViewAddition.h"
 
 #define kContentOffset      @"contentOffset"
 
@@ -240,7 +239,6 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (offY >= -CGRectGetHeight(self.tabBarView.frame)) {
         // 悬停
         self.tabBarHasStatic = YES;
-        self.currentScrollView.tabBarHasStatic = YES;
         
         if (self.tabBarView.superview == self) {
             return;
@@ -256,7 +254,6 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
             [self scrollViewDidEndDecelerating:self.collectionView];
         }
         self.tabBarHasStatic = NO;
-        self.currentScrollView.tabBarHasStatic = NO;
     }
 }
 
