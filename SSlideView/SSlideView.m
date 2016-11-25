@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 @property (nonatomic, strong) UIScrollView * currentScrollView;
 @property (nonatomic, assign) NSInteger currentIndex;
 @property (nonatomic, strong) NSMutableArray * itemsArr;
+@property (nonatomic, strong) NSMutableArray * contentOffSetArr;
 
 @property (nonatomic, assign) CGFloat tableInsetHeight;
 @property (nonatomic, assign) BOOL loadFirst;
@@ -58,6 +59,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 - (void)loadData {
     self.itemsArr = [NSMutableArray array];
+    self.contentOffSetArr = [NSMutableArray array];
     self.currentScrollView = self.itemsArr.firstObject;
     self.tabBarHasStatic = NO;
     self.animationCompleted = YES;
@@ -74,6 +76,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         self.itemsArr = [NSMutableArray arrayWithCapacity:count];
         for (int i=0; i<count; i++) {
             [self.itemsArr addObject:@""];
+            [self.contentOffSetArr addObject:@""];
         }
         return count;
     }
@@ -105,7 +108,13 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         }else {
             // 保证第一次出现的item的contentOffset和上一个一样
             if (self.tabBarHasStatic) {
-                [cell.tableView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
+                NSNumber * itemOffY = self.contentOffSetArr[indexPath.item];
+                if ([itemOffY isKindOfClass:[NSNumber class]]) {
+                    // 恢复之前的 contentOffSet
+                    [cell.tableView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
+                }else {
+                    [cell.tableView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
+                }
             }else {
                 [cell.tableView setContentOffset:self.currentScrollView.contentOffset animated:NO];
             }
@@ -113,6 +122,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
     
     return cell;
+}
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    // 记录消失时的 contentOffSet
+    UIScrollView * scrollView = self.itemsArr[indexPath.item];
+    [self.contentOffSetArr replaceObjectAtIndex:indexPath.item withObject:@(scrollView.contentOffset.y)];
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
