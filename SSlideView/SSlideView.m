@@ -29,8 +29,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 @property (nonatomic, strong) NSMutableArray * itemsArr;
 
 @property (nonatomic, assign) CGFloat tableInsetHeight;
+@property (nonatomic, assign) BOOL loadFirst;
 @property (nonatomic, assign) BOOL tabBarHasStatic;
 @property (nonatomic, assign) BOOL animationCompleted;
+@property (nonatomic, assign) BOOL isScrollFromTabBarView;
 @end
 
 @implementation SSlideView
@@ -59,6 +61,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.currentScrollView = self.itemsArr.firstObject;
     self.tabBarHasStatic = NO;
     self.animationCompleted = YES;
+    self.loadFirst = YES;
 }
 
 #pragma mark UICollectionViewDataSource 
@@ -95,7 +98,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         
         if (indexPath.item == 0) {
             // 第一个scrollview 手动加上头视图
-            [self scrollViewDidEndDecelerating:self.collectionView];
+            if (self.loadFirst) {
+                [self scrollViewDidEndDecelerating:self.collectionView];
+                self.loadFirst = NO;
+            }
         }else {
             // 保证第一次出现的item的contentOffset和上一个一样
             if (self.tabBarHasStatic) {
@@ -151,10 +157,18 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     [self.tabBarView scrollToTitleAtIndex:_currentIndex];
 }
 
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    if (self.isScrollFromTabBarView) {
+        [self scrollViewDidEndDecelerating:self.collectionView];
+        self.isScrollFromTabBarView = NO;
+    }
+}
+
 #pragma mark SSlideTabBarViewDelegate
 - (void)slideTabBar:(SSlideTabBarView *)slideTabBar didSelectedTitleOfIndex:(NSInteger)index {
-    CGFloat width = _collectionFrame.size.width;
-    [self.collectionView setContentOffset:CGPointMake(index*width, 0) animated:YES];
+    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
+    [self scrollViewWillBeginDragging:self.collectionView];
+    self.isScrollFromTabBarView = YES;
 }
 
 #pragma mark update
@@ -224,7 +238,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self updateAllItemOffY:-CGRectGetHeight(self.tabBarView.frame)];
         
     }else {
-        if (self.tabBarView.superview == self && self.animationCompleted) {
+        if (self.tabBarView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
             [self scrollViewDidEndDecelerating:self.collectionView];
         }
         self.tabBarHasStatic = NO;
