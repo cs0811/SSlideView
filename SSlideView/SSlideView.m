@@ -127,6 +127,22 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     UIScrollView * scrollView = self.itemsArr[indexPath.item];
     [self.contentOffSetArr replaceObjectAtIndex:indexPath.item withObject:@(scrollView.contentOffset.y)];
 }
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    SSlideViewCollectionCell * tempCell = (SSlideViewCollectionCell *)cell;
+    
+    if (!self.tabBarHasStatic) {
+        return;
+    }
+    NSNumber * itemOffY = self.contentOffSetArr[indexPath.item];
+    if (![itemOffY isKindOfClass:[NSNumber class]]) {
+        return;
+    }
+    if (itemOffY.floatValue <= -CGRectGetHeight(self.tabBarView.frame)) {
+        return;
+    }
+    // 恢复之前的 contentOffSet
+    [tempCell.tableView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
+}
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
 }
