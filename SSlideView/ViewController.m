@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "SSlideView.h"
 #import "TestViewController.h"
+#import "TestTabBarView.h"
 
 @interface ViewController ()<SSlideViewDelegate>
 
@@ -16,7 +17,7 @@
 @property (nonatomic, strong) TestViewController * test2;
 @property (nonatomic, strong) TestViewController * test3;
 @property (nonatomic, strong) TestViewController * test4;
-@property (nonatomic, strong) SSlideTabBarView * tabBarView;
+@property (nonatomic, strong) TestTabBarView * tabBarView;
 @property (nonatomic, strong) UIView * headerView;
 
 @end
@@ -33,6 +34,8 @@
     [self addChildViewController:self.test2];
     [self addChildViewController:self.test3];
     [self addChildViewController:self.test4];
+    
+    [self.tabBarView loadDataWithArr:@[@"测试",@"哈哈哈",@"不是",@"你说"]];
     
     SSlideView * slideView = [[SSlideView alloc] initWithFrame:self.view.frame];
     slideView.delegate = self;
@@ -83,9 +86,9 @@
     }
     return _test4;
 }
-- (SSlideTabBarView *)tabBarView {
+- (TestTabBarView *)tabBarView {
     if (!_tabBarView) {
-        SSlideTabBarView * tabbar = [[SSlideTabBarView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 40)];
+        TestTabBarView * tabbar = [[TestTabBarView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 40)];
         _tabBarView = tabbar;
     }
     return _tabBarView;

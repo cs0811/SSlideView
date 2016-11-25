@@ -8,9 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@class SSlideTabBarView;
+
 @protocol SSlideTabBarViewDelegate <NSObject>
 
-- (void)didSelectedTitleOfIndex:(NSInteger)index;
+/**
+ 选中了指定title (需要内部调用，以通知SlideView滚动到指定位置)
+ */
+- (void)slideTabBar:(SSlideTabBarView *)slideTabBar didSelectedTitleOfIndex:(NSInteger)index;
 
 @end
 
@@ -20,10 +25,10 @@
 
 
 /**
- 滚动到指定标题处
+ 滚动到指定title处
 
- @param index   index
+ @param index   need to overwrite
  */
-- (void)scrollToTitleOfIndex:(NSInteger)index;
+- (void)scrollToTitleAtIndex:(NSInteger)index;
 
 @end

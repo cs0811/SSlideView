@@ -18,6 +18,7 @@
 		D4768BE31DE53C9A00078C32 /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4768BE21DE53C9A00078C32 /* TestViewController.m */; };
 		D4768BE61DE5494100078C32 /* SSlideTabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4768BE51DE5494100078C32 /* SSlideTabBarView.m */; };
 		D4847AAC1DE6DFCD00577F80 /* UIScrollView+SSlideViewAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = D4847AAB1DE6DFCD00577F80 /* UIScrollView+SSlideViewAddition.m */; };
+		D4D80FBA1DE7E92E0070A570 /* TestTabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D80FB91DE7E92E0070A570 /* TestTabBarView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,8 @@
 		D4768BE51DE5494100078C32 /* SSlideTabBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSlideTabBarView.m; sourceTree = "<group>"; };
 		D4847AAA1DE6DFCD00577F80 /* UIScrollView+SSlideViewAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SSlideViewAddition.h"; sourceTree = "<group>"; };
 		D4847AAB1DE6DFCD00577F80 /* UIScrollView+SSlideViewAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SSlideViewAddition.m"; sourceTree = "<group>"; };
+		D4D80FB81DE7E92E0070A570 /* TestTabBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTabBarView.h; sourceTree = "<group>"; };
+		D4D80FB91DE7E92E0070A570 /* TestTabBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTabBarView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +82,8 @@
 				D4768BC81DE5372800078C32 /* ViewController.m */,
 				D4768BE11DE53C9A00078C32 /* TestViewController.h */,
 				D4768BE21DE53C9A00078C32 /* TestViewController.m */,
+				D4D80FB81DE7E92E0070A570 /* TestTabBarView.h */,
+				D4D80FB91DE7E92E0070A570 /* TestTabBarView.m */,
 				D4768BCA1DE5372800078C32 /* Main.storyboard */,
 				D4768BCD1DE5372800078C32 /* Assets.xcassets */,
 				D4768BCF1DE5372800078C32 /* LaunchScreen.storyboard */,
@@ -181,6 +186,7 @@
 				D4768BC61DE5372800078C32 /* AppDelegate.m in Sources */,
 				D4768BE61DE5494100078C32 /* SSlideTabBarView.m in Sources */,
 				D4768BDA1DE5376000078C32 /* SSlideView.m in Sources */,
+				D4D80FBA1DE7E92E0070A570 /* TestTabBarView.m in Sources */,
 				D4847AAC1DE6DFCD00577F80 /* UIScrollView+SSlideViewAddition.m in Sources */,
 				D4768BC31DE5372800078C32 /* main.m in Sources */,
 			);

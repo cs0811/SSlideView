@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     SlideViewScrollStatus_End ,         // 结束滚动
 };
 
-@interface SSlideView ()<UICollectionViewDelegate,UICollectionViewDataSource>
+@interface SSlideView ()<UICollectionViewDelegate,UICollectionViewDataSource,SSlideTabBarViewDelegate>
 {
     CGRect _collectionFrame;
 }
@@ -114,6 +114,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 
 #pragma mark UIScrollViewDelegate
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if (scrollView != self.collectionView) {
+        return;
+    }
+    
     _currentIndex = scrollView.contentOffset.x/CGRectGetWidth(scrollView.frame);
     if (_currentIndex >= self.itemsArr.count) {
         return;
@@ -127,11 +131,15 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if (scrollView != self.collectionView) {
+        return;
+    }
+    
     _currentIndex = scrollView.contentOffset.x/CGRectGetWidth(scrollView.frame);
     if (_currentIndex >= self.itemsArr.count) {
         return;
     }
-    if (scrollView.isDragging) {
+    if (scrollView.isDragging || scrollView.isDecelerating) {
         // 拖拽结束才计算
         return;
     }
@@ -140,6 +148,13 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
     }
     self.animationCompleted = YES;
+    [self.tabBarView scrollToTitleAtIndex:_currentIndex];
+}
+
+#pragma mark SSlideTabBarViewDelegate
+- (void)slideTabBar:(SSlideTabBarView *)slideTabBar didSelectedTitleOfIndex:(NSInteger)index {
+    CGFloat width = _collectionFrame.size.width;
+    [self.collectionView setContentOffset:CGPointMake(index*width, 0) animated:YES];
 }
 
 #pragma mark update
@@ -254,6 +269,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 - (void)setTabBarView:(SSlideTabBarView *)tabBarView {
     _tabBarView = tabBarView;
+    _tabBarView.delegate = self;
     self.tableInsetHeight += CGRectGetHeight(_tabBarView.frame);
 }
 
