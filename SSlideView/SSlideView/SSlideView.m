@@ -9,11 +9,15 @@
 #import "SSlideView.h"
 #import "SSlideViewCollectionCell.h"
 
+
 #define kContentOffset      @"contentOffset"
 
+
 typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
-    SlideViewScrollStatus_Begin = 0,    // 开始滚动
-    SlideViewScrollStatus_End ,         // 结束滚动
+    SlideViewScrollStatus_Begin = 0,    // 开始滚动 (水平)
+    SlideViewScrollStatus_End ,         // 结束滚动 (水平)
+    SlideViewScrollStatus_StaticTabBar ,    // 悬停TabBar
+    SlideViewScrollStatus_StaticHeaderViewAndTabBar ,       // 悬停TabBar与HeaderView
 };
 
 @interface SSlideView ()<UICollectionViewDelegate,UICollectionViewDataSource,SSlideTabBarViewDelegate>
@@ -21,8 +25,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     CGRect _collectionFrame;
 }
 @property (nonatomic, strong) UICollectionView * collectionView;
+@property (nonatomic, strong) UIView * baseHeaderView;
 @property (nonatomic, strong) UIView * headerView;
 @property (nonatomic, strong) SSlideTabBarView * tabBarView;
+
 @property (nonatomic, strong) UIScrollView * currentScrollView;
 @property (nonatomic, assign) NSInteger currentIndex;
 @property (nonatomic, strong) NSMutableArray * itemsArr;
@@ -53,6 +59,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 
 #pragma mark loadBaseUI 
 - (void)loadBaseUI {
+    self.userInteractionEnabled = YES;
     self.backgroundColor = [UIColor whiteColor];
     [self addSubview:self.collectionView];
 }
@@ -100,6 +107,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         cell.tableView = (UITableView *)[self.delegate slideView:self itemAtIndex:indexPath.item];
         cell.tableView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
         [cell.tableView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
+        if (self.refreshAtTabBarViewTop) {
+            cell.tableView.mj_header.ignoredScrollViewContentInsetTop = self.tableInsetHeight;
+        }else {
+            cell.tableView.mj_header.ignoredScrollViewContentInsetTop = 0;
+        }
         [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.tableView];
         
         if (indexPath.item == 0) {
@@ -214,26 +226,33 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         return;
     }
     
+    CGRect frame = CGRectZero;
+    frame.size = CGSizeMake(CGRectGetWidth(_collectionFrame), self.tableInsetHeight);
     if (type == SlideViewScrollStatus_Begin) {
-        [self addSubview:self.headerView];
-        [self addSubview:self.tabBarView];
+        [self addSubview:self.baseHeaderView];
 
         CGFloat offY = self.tableInsetHeight+self.currentScrollView.contentOffset.y;
-        
-        CGRect frame = self.headerView.frame;
-        self.headerView.frame = (CGRect){0, -offY, frame.size.width, frame.size.height};
-        frame = self.tabBarView.frame;
-        self.tabBarView.frame = (CGRect){0, CGRectGetMaxY(self.headerView.frame), frame.size.width, frame.size.height};
+        frame.origin.y = -offY;
+        self.baseHeaderView.frame = frame;
         
     }else if (type == SlideViewScrollStatus_End) {
-        [self.currentScrollView addSubview:self.headerView];
-        [self.currentScrollView addSubview:self.tabBarView];
+        [self.currentScrollView addSubview:self.baseHeaderView];
         
-        CGRect frame = self.tabBarView.frame;
-        self.tabBarView.frame = (CGRect){0, -frame.size.height, frame.size.width, frame.size.height};
-        frame = self.headerView.frame;
-        self.headerView.frame = (CGRect){0, -self.tableInsetHeight, frame.size.width, frame.size.height};
-    }    
+        frame.origin.y = -self.tableInsetHeight;
+        self.baseHeaderView.frame = frame;
+
+    }else if (type == SlideViewScrollStatus_StaticTabBar) {
+        [self addSubview:self.baseHeaderView];
+
+        frame.origin.y = -CGRectGetHeight(self.headerView.frame);
+        self.baseHeaderView.frame = frame;
+
+    }else if (type == SlideViewScrollStatus_StaticHeaderViewAndTabBar) {
+        [self addSubview:self.baseHeaderView];
+        
+        frame.origin.y = 0;
+        self.baseHeaderView.frame = frame;
+    }
 }
 
 #pragma mark KVO
@@ -250,25 +269,25 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         // 悬停
         self.tabBarHasStatic = YES;
         
-        if (self.tabBarView.superview == self) {
+        if (self.baseHeaderView.superview == self) {
             return;
         }
-        [self addSubview:self.tabBarView];
-        CGRect frame = self.tabBarView.frame;
-        frame.origin.y = 0;
-        self.tabBarView.frame = frame;
+        [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticTabBar];
         [self updateAllItemOffY:-CGRectGetHeight(self.tabBarView.frame)];
         
     }else {
         
-        if (offY<=0 && !self.refreshAtTabBarViewTop) {
-            
+        if (offY<=-self.tableInsetHeight && !self.refreshAtTabBarViewTop) {
+            if (self.baseHeaderView.superview != self && self.animationCompleted && !self.isScrollFromTabBarView) {
+                [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticHeaderViewAndTabBar];
+            }
+//            self.tabBarHasStatic = YES;
         }else {
-            if (self.tabBarView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
+            if (self.baseHeaderView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
                 [self scrollViewDidEndDecelerating:self.collectionView];
             }
+            self.tabBarHasStatic = NO;
         }
-        self.tabBarHasStatic = NO;
     }
 }
 
@@ -303,15 +322,29 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
     return _collectionView;
 }
+- (UIView *)baseHeaderView {
+    if (!_baseHeaderView) {
+        UIView * view = [UIView new];
+        view.userInteractionEnabled = YES;
+        _baseHeaderView = view;
+    }
+    return _baseHeaderView;
+}
+
 - (void)setHeaderView:(UIView *)headerView {
     _headerView = headerView;
+    _headerView.frame = CGRectMake(0, 0, CGRectGetWidth(headerView.frame), CGRectGetHeight(headerView.frame));
+    [self.baseHeaderView addSubview:_headerView];
     self.tableInsetHeight += CGRectGetHeight(_headerView.frame);
 }
 - (void)setTabBarView:(SSlideTabBarView *)tabBarView {
     _tabBarView = tabBarView;
     _tabBarView.delegate = self;
+    _tabBarView.frame = CGRectMake(0, self.tableInsetHeight, CGRectGetWidth(tabBarView.frame), CGRectGetHeight(tabBarView.frame));
+    [self.baseHeaderView addSubview:_tabBarView];
     self.tableInsetHeight += CGRectGetHeight(_tabBarView.frame);
 }
+
 
 //- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
 //    if (CGRectContainsPoint(self.headerView.frame, point)) {

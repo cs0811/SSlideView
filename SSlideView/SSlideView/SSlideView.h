@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SSlideTabBarView.h"
 
+
 @class SSlideView;
 @protocol SSlideViewDelegate <NSObject>
 
@@ -24,7 +25,6 @@
 @end
 
 @interface SSlideView : UIView
-
 
 /**
  是否在最顶部刷新       (默认 YES)

@@ -18,7 +18,7 @@
 @property (nonatomic, strong) TestViewController * test2;
 @property (nonatomic, strong) TestViewController * test3;
 @property (nonatomic, strong) TestViewController * test4;
-@property (nonatomic, strong) SSlideTapTabBarView * tabBarView;
+@property (nonatomic, strong) SSlideScrollTabBarView * tabBarView;
 @property (nonatomic, strong) UIView * headerView;
 
 @end
@@ -92,9 +92,9 @@
     }
     return _test4;
 }
-- (SSlideTapTabBarView *)tabBarView {
+- (SSlideScrollTabBarView *)tabBarView {
     if (!_tabBarView) {
-        SSlideTapTabBarView * tabbar = [[SSlideTapTabBarView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 40)];
+        SSlideScrollTabBarView * tabbar = [[SSlideScrollTabBarView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 40)];
         _tabBarView = tabbar;
     }
     return _tabBarView;
