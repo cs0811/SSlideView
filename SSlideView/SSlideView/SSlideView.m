@@ -60,6 +60,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 #pragma mark loadBaseUI 
 - (void)loadBaseUI {
     self.userInteractionEnabled = YES;
+    self.clipsToBounds = YES;
     self.backgroundColor = [UIColor whiteColor];
     [self addSubview:self.collectionView];
 }
@@ -138,11 +139,6 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     
     return cell;
 }
-- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    // 记录消失时的 contentOffSet
-    UIScrollView * scrollView = self.itemsArr[indexPath.item];
-    [self.contentOffSetArr replaceObjectAtIndex:indexPath.item withObject:@(scrollView.contentOffset.y)];
-}
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
 }
@@ -163,6 +159,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
     }
     self.animationCompleted = NO;
+    // 记录 contentOffSet
+    [self.contentOffSetArr replaceObjectAtIndex:_currentIndex withObject:@(self.currentScrollView.contentOffset.y)];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -276,17 +274,18 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self updateAllItemOffY:-CGRectGetHeight(self.tabBarView.frame)];
         
     }else {
-        
+                
         if (offY<=-self.tableInsetHeight && !self.refreshAtTabBarViewTop) {
+            self.tabBarHasStatic = YES;
+
             if (self.baseHeaderView.superview != self && self.animationCompleted && !self.isScrollFromTabBarView) {
                 [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticHeaderViewAndTabBar];
             }
-//            self.tabBarHasStatic = YES;
         }else {
+            self.tabBarHasStatic = NO;
             if (self.baseHeaderView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
                 [self scrollViewDidEndDecelerating:self.collectionView];
             }
-            self.tabBarHasStatic = NO;
         }
     }
 }

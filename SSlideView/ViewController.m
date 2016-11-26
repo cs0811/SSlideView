@@ -29,6 +29,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
     self.view.backgroundColor = [UIColor whiteColor];
     
     [self addChildViewController:self.test1];
@@ -38,9 +40,9 @@
     
     [self.tabBarView loadDataWithArr:@[@"测试sdfsdfwesf",@"哈哈哈wefsfwewwe",@"不是sdfweewwer",@"你说sfwevfwefe"]];
     
-    SSlideView * slideView = [[SSlideView alloc] initWithFrame:self.view.frame];
+    SSlideView * slideView = [[SSlideView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height-64)];
     slideView.delegate = self;
-    slideView.refreshAtTabBarViewTop = NO;
+//    slideView.refreshAtTabBarViewTop = NO;
     [self.view addSubview:slideView];
 }
 

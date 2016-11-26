@@ -177,6 +177,7 @@
 				TargetAttributes = {
 					D4768BBD1DE5372800078C32 = {
 						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = UQSUXJQD38;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -392,6 +393,7 @@
 			baseConfigurationReference = C28868754397AB2AC5FB0CD6 /* Pods-SSlideView.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = UQSUXJQD38;
 				GCC_PREFIX_HEADER = SSlideView/Header.h;
 				INFOPLIST_FILE = SSlideView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -405,6 +407,7 @@
 			baseConfigurationReference = 51B6B60AB28701737A2F5B48 /* Pods-SSlideView.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = UQSUXJQD38;
 				GCC_PREFIX_HEADER = SSlideView/Header.h;
 				INFOPLIST_FILE = SSlideView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
