@@ -183,6 +183,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
     }
     self.animationCompleted = YES;
+    // 记录 contentOffSet
+    [self.contentOffSetArr replaceObjectAtIndex:_currentIndex withObject:@(self.currentScrollView.contentOffset.y)];
     [self.tabBarView scrollToTitleAtIndex:_currentIndex];
 }
 
@@ -214,13 +216,21 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 
 - (void)updateStaticItemOffY:(CGFloat)offy {
-    for (UIScrollView * tempScrollView in self.itemsArr) {
+    for (int i=0; i<self.itemsArr.count; i++) {
+        UIScrollView * tempScrollView = self.itemsArr[i];
         if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]] || tempScrollView == self.currentScrollView) {
             continue;
         }
         if (offy <= -CGRectGetHeight(self.tabBarView.frame)) {
-            if (tempScrollView.contentOffset.y >= -CGRectGetHeight(self.tabBarView.frame)) {
-                continue;
+            NSNumber * itemOffY = self.contentOffSetArr[i];
+            if ([itemOffY isKindOfClass:[NSNumber class]]){
+                if (itemOffY.floatValue >= -CGRectGetHeight(self.tabBarView.frame)) {
+                    [tempScrollView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
+                    continue;
+                }else {
+                    [tempScrollView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
+                    continue;
+                }
             }else {
                 [tempScrollView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
                 continue;
