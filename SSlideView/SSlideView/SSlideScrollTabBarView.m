@@ -103,9 +103,13 @@
 - (void)middleTitleAtIndex:(NSInteger)index {
     
     if (index<_countOfTitleMiddleUnAble) {
+        [self.scroll setContentOffset:CGPointMake(0, 0) animated:YES];
         return;
     }
     if (index>self.titleArr.count-1-_countOfTitleMiddleUnAble) {
+        CGFloat tempWidth = self.scroll.contentSize.width;
+        CGFloat width = self.scroll.frame.size.width;
+        [self.scroll setContentOffset:CGPointMake(tempWidth-width, 0) animated:YES];
         return;
     }
     
