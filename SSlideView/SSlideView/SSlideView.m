@@ -116,24 +116,15 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.tableView];
         
         if (indexPath.item == 0) {
-            // 第一个scrollview 手动加上头视图
             if (self.loadFirst) {
+                // 第一个scrollview 手动加上头视图
                 [self scrollViewDidEndDecelerating:self.collectionView];
                 self.loadFirst = NO;
+            }else {
+                [self handleCellForRow:cell indexPath:indexPath];
             }
         }else {
-            // 保证第一次出现的item的contentOffset和上一个一样
-            if (self.tabBarHasStatic) {
-                NSNumber * itemOffY = self.contentOffSetArr[indexPath.item];
-                if ([itemOffY isKindOfClass:[NSNumber class]]) {
-                    // 恢复之前的 contentOffSet
-                    [cell.tableView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
-                }else {
-                    [cell.tableView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
-                }
-            }else {
-                [cell.tableView setContentOffset:self.currentScrollView.contentOffset animated:NO];
-            }
+            [self handleCellForRow:cell indexPath:indexPath];
         }
     }
     
@@ -319,6 +310,21 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
                 }
             }
         }
+    }
+}
+
+- (void)handleCellForRow:(SSlideViewCollectionCell *)cell indexPath:(NSIndexPath *)indexPath {
+    // 保证第一次出现的item的contentOffset和上一个一样
+    if (self.tabBarHasStatic) {
+        NSNumber * itemOffY = self.contentOffSetArr[indexPath.item];
+        if ([itemOffY isKindOfClass:[NSNumber class]]) {
+            // 恢复之前的 contentOffSet
+            [cell.tableView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
+        }else {
+            [cell.tableView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
+        }
+    }else {
+        [cell.tableView setContentOffset:self.currentScrollView.contentOffset animated:NO];
     }
 }
 
