@@ -42,7 +42,7 @@
     
     SSlideView * slideView = [[SSlideView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height-64)];
     slideView.delegate = self;
-//    slideView.refreshAtTabBarViewTop = NO;
+    slideView.refreshAtTabBarViewTop = NO;
     [self.view addSubview:slideView];
 }
 
@@ -63,6 +63,9 @@
 }
 - (UIView *)slideHeaderViewOfSSlideView:(SSlideView *)slideView {
     return self.headerView;
+}
+- (void)slideView:(SSlideView *)slideView didScrollToIndex:(NSInteger)index {
+    NSLog(@"index -- %ld",index);
 }
 
 #pragma mark getter

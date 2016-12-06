@@ -52,7 +52,7 @@
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"index -- %ld",indexPath.row);
+    NSLog(@"selectedIndex -- %ld",indexPath.row);
 }
 
 #pragma mark getter

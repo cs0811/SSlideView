@@ -20,7 +20,7 @@
 
 @optional
 - (UIView *)slideHeaderViewOfSSlideView:(SSlideView *)slideView;
-
+- (void)slideView:(SSlideView *)slideView didScrollToIndex:(NSInteger)index;
 
 @end
 
