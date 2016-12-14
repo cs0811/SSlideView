@@ -42,6 +42,8 @@
     
     SSlideView * slideView = [[SSlideView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height-64)];
     slideView.delegate = self;
+//    slideView.bouncesEnable = NO;
+//    slideView.scrollEnable = NO;
     slideView.refreshAtTabBarViewTop = NO;
     [self.view addSubview:slideView];
 }

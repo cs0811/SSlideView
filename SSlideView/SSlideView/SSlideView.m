@@ -73,6 +73,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.animationCompleted = YES;
     self.loadFirst = YES;
     self.refreshAtTabBarViewTop = YES;
+    self.scrollEnable = YES;
+    self.bouncesEnable = YES;
 }
 
 #pragma mark UICollectionViewDataSource 
@@ -369,6 +371,15 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         _baseHeaderView = view;
     }
     return _baseHeaderView;
+}
+
+- (void)setScrollEnable:(BOOL)scrollEnable {
+    _scrollEnable = scrollEnable;
+    self.collectionView.scrollEnabled = _scrollEnable;
+}
+- (void)setBouncesEnable:(BOOL)bouncesEnable {
+    _bouncesEnable = bouncesEnable;
+    self.collectionView.bounces = _bouncesEnable;
 }
 
 - (void)setHeaderView:(UIView *)headerView {

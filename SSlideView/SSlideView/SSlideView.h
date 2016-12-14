@@ -33,4 +33,11 @@
 
 @property (nonatomic, weak) id<SSlideViewDelegate> delegate;
 
+/**
+ 能否滚动       （默认 YES）
+ */
+@property (nonatomic, assign) BOOL scrollEnable;
+
+@property (nonatomic, assign) BOOL bouncesEnable;       // （默认 YES）
+
 @end
