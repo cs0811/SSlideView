@@ -212,14 +212,14 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     
     // 处理快速滚动问题
     CGFloat tempOffy = scrollView.contentOffset.x/scrollView.frame.size.width;
+    if (tempOffy>self.itemsArr.count-1 || tempOffy<0) {
+        self.contentOffSetOverBordered = YES;
+        return;
+    }
+    
+    self.contentOffSetOverBordered = NO;
     // 判断是否为整数
     if (tempOffy != ceilf(tempOffy)) {
-        if (tempOffy>self.itemsArr.count-1 || tempOffy<0) {
-            self.contentOffSetOverBordered = YES;
-            return;
-        }
-        
-        self.contentOffSetOverBordered = NO;
         if (self.baseHeaderView.superview != self) {
             [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
         }
