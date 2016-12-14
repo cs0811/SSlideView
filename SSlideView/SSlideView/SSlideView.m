@@ -48,8 +48,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self = [super initWithFrame:frame];
     if (self) {
         _collectionFrame = CGRectMake(0, 0, frame.size.width, frame.size.height);
-        [self loadBaseUI];
         [self loadData];
+        [self loadBaseUI];
     }
     return self;
 }
@@ -150,7 +150,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self updateAllItemOffY:self.currentScrollView.contentOffset.y];
         [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
     }else {
-        [self updateStaticItemOffY:-CGRectGetHeight(self.tabBarView.frame)];
+        [self updateStaticItemOffY];
     }
     self.animationCompleted = NO;
     // 记录 contentOffSet
@@ -180,15 +180,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (!self.tabBarHasStatic) {
         [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
     }else {
-        if (self.currentScrollView.contentOffset.y < -CGRectGetHeight(self.tabBarView.frame)) {
-            NSNumber * itemOffY = self.contentOffSetArr[_currentIndex];
-            if ([itemOffY isKindOfClass:[NSNumber class]] && itemOffY.floatValue > -CGRectGetHeight(self.tabBarView.frame)) {
-                // 恢复之前的 contentOffSet
-                [self.currentScrollView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
-            }else {
-                [self.currentScrollView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
-            }
-        }
+        
+        NSNumber * itemOffY = self.contentOffSetArr[_currentIndex];
+        [self setScrollView:self.currentScrollView staticContentSetOffYWithNumber:itemOffY];
     }
     self.animationCompleted = YES;
     // 记录 contentOffSet
@@ -223,28 +217,15 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
 }
 
-- (void)updateStaticItemOffY:(CGFloat)offy {
+- (void)updateStaticItemOffY {
     for (int i=0; i<self.itemsArr.count; i++) {
         UIScrollView * tempScrollView = self.itemsArr[i];
         if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]] || tempScrollView == self.currentScrollView) {
             continue;
         }
-        if (offy <= -CGRectGetHeight(self.tabBarView.frame)) {
-            NSNumber * itemOffY = self.contentOffSetArr[i];
-            if ([itemOffY isKindOfClass:[NSNumber class]]){
-                if (itemOffY.floatValue >= -CGRectGetHeight(self.tabBarView.frame)) {
-                    [tempScrollView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
-                    continue;
-                }else {
-                    [tempScrollView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
-                    continue;
-                }
-            }else {
-                [tempScrollView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
-                continue;
-            }
-        }
-        [tempScrollView setContentOffset:CGPointMake(0, offy) animated:NO];
+        
+        NSNumber * itemOffY = self.contentOffSetArr[i];
+        [self setScrollView:tempScrollView staticContentSetOffYWithNumber:itemOffY];
     }
 }
 
@@ -297,16 +278,16 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     CGPoint point = [change[@"new"] CGPointValue];
     CGFloat offY = point.y;
     
-    if (offY >= -CGRectGetHeight(self.tabBarView.frame)) {
+    if (offY >= -self.tabStaticHeight) {
         // 悬停
         if (self.baseHeaderView.superview == self) {
             return;
         }
         self.tabBarHasStatic = YES;
         
-        if (self.currentScrollView.contentOffset.y >= -CGRectGetHeight(self.tabBarView.frame)) {
+        if (self.currentScrollView.contentOffset.y >= -self.tabStaticHeight) {
             [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticTabBar];
-            [self updateStaticItemOffY:-CGRectGetHeight(self.tabBarView.frame)];
+            [self updateStaticItemOffY];
         }
         
     }else {
@@ -322,7 +303,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
             if (self.baseHeaderView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
                 self.tabBarHasStatic = NO;
                 
-                if (self.currentScrollView.contentOffset.y < -CGRectGetHeight(self.tabBarView.frame)) {
+                if (self.currentScrollView.contentOffset.y < -self.tabStaticHeight) {
                     [self scrollViewDidEndDecelerating:self.collectionView];
                 }
             }
@@ -334,12 +315,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     // 保证第一次出现的item的contentOffset和上一个一样
     if (self.tabBarHasStatic) {
         NSNumber * itemOffY = self.contentOffSetArr[indexPath.item];
-        if ([itemOffY isKindOfClass:[NSNumber class]]) {
-            // 恢复之前的 contentOffSet
-            [cell.tableView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
-        }else {
-            [cell.tableView setContentOffset:CGPointMake(0, -CGRectGetHeight(self.tabBarView.frame)) animated:NO];
-        }
+        [self setScrollView:cell.tableView staticContentSetOffYWithNumber:itemOffY];
     }else {
         [cell.tableView setContentOffset:self.currentScrollView.contentOffset animated:NO];
     }
@@ -355,6 +331,16 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
 }
 
+- (void)setScrollView:(UIScrollView *)scrollView staticContentSetOffYWithNumber:(NSNumber *)itemOffY {
+    if (scrollView.contentOffset.y < -self.tabStaticHeight) {
+        if ([itemOffY isKindOfClass:[NSNumber class]] && itemOffY.floatValue >= -self.tabStaticHeight) {
+            // 恢复之前的 contentOffSet
+            [scrollView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
+        }else {
+            [scrollView setContentOffset:CGPointMake(0, -self.tabStaticHeight) animated:NO];
+        }
+    }
+}
 
 #pragma mark getter
 - (UICollectionView *)collectionView {
@@ -397,7 +383,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     _tabBarView.frame = CGRectMake(0, self.tableInsetHeight, CGRectGetWidth(tabBarView.frame), CGRectGetHeight(tabBarView.frame));
     [self.baseHeaderView addSubview:_tabBarView];
     self.tableInsetHeight += CGRectGetHeight(_tabBarView.frame);
-    self.tabBarHasStatic = CGRectGetHeight(_tabBarView.frame);
+    self.tabStaticHeight = CGRectGetHeight(_tabBarView.frame);
 }
 
 
