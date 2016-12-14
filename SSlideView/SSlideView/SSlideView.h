@@ -15,7 +15,7 @@
 
 - (NSInteger)numberOfItemsInSSlideView:(SSlideView *)slideView;
 - (UIScrollView *)slideView:(SSlideView *)slideView itemAtIndex:(NSInteger)index;
-- (UIView *)slideView:(SSlideView *)slideView itemViewAtIndex:(NSInteger)index;
+- (UIView *)slideView:(SSlideView *)slideView itemSuperViewAtIndex:(NSInteger)index;
 - (SSlideTabBarView *)slideTabBarViewOfSSlideView:(SSlideView *)slideView;
 
 @optional

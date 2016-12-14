@@ -34,7 +34,7 @@
 - (void)setTableBaseView:(UIView *)tableBaseView {
     tableBaseView.frame = self.bounds;
     _tableBaseView = tableBaseView;
-    [self addSubview:_tableBaseView];
+    [self.contentView addSubview:_tableBaseView];
 }
 
 @end

@@ -54,7 +54,7 @@
     UIScrollView *scrollView = [[self.childViewControllers objectAtIndex:index] tableView];
     return scrollView;
 }
-- (UIView *)slideView:(SSlideView *)slideView itemViewAtIndex:(NSInteger)index {
+- (UIView *)slideView:(SSlideView *)slideView itemSuperViewAtIndex:(NSInteger)index {
     UIView *view = [[self.childViewControllers objectAtIndex:index] view];
     return view;
 }
