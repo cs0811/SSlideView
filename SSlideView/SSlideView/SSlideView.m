@@ -40,6 +40,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 @property (nonatomic, assign) BOOL tabBarHasStatic;
 @property (nonatomic, assign) BOOL animationCompleted;
 @property (nonatomic, assign) BOOL isScrollFromTabBarView;
+@property (nonatomic, assign) BOOL contentOffSetOverBordered;
 @end
 
 @implementation SSlideView
@@ -75,6 +76,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.refreshAtTabBarViewTop = YES;
     self.scrollEnable = YES;
     self.bouncesEnable = YES;
+    self.contentOffSetOverBordered = NO;
 }
 
 #pragma mark UICollectionViewDataSource 
@@ -150,7 +152,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.currentScrollView = self.itemsArr[self.currentIndex];
     if (!self.tabBarHasStatic) {
         [self updateAllItemOffY:self.currentScrollView.contentOffset.y];
-        if (self.baseHeaderView.superview != self) {
+        if (self.baseHeaderView.superview != self && !self.contentOffSetOverBordered) {
             [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
         }
     }else {
@@ -213,8 +215,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     // 判断是否为整数
     if (tempOffy != ceilf(tempOffy)) {
         if (tempOffy>self.itemsArr.count-1 || tempOffy<0) {
+            self.contentOffSetOverBordered = YES;
             return;
         }
+        
+        self.contentOffSetOverBordered = NO;
         if (self.baseHeaderView.superview != self) {
             [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
         }
