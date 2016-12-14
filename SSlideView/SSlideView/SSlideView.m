@@ -287,7 +287,6 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         
         if (self.currentScrollView.contentOffset.y >= -self.tabStaticHeight) {
             [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticTabBar];
-            [self updateStaticItemOffY];
         }
         
     }else {
@@ -300,11 +299,12 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
                 [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticHeaderViewAndTabBar];
             }
         }else {
-            if (self.baseHeaderView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
-                self.tabBarHasStatic = NO;
+            if (self.currentScrollView.contentOffset.y < -self.tabStaticHeight) {
                 
-                if (self.currentScrollView.contentOffset.y < -self.tabStaticHeight) {
-                    [self scrollViewDidEndDecelerating:self.collectionView];
+                if (self.baseHeaderView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
+                    self.tabBarHasStatic = NO;
+                    
+                    [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
                 }
             }
         }
