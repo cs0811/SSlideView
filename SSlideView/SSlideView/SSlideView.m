@@ -150,7 +150,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.currentScrollView = self.itemsArr[self.currentIndex];
     if (!self.tabBarHasStatic) {
         [self updateAllItemOffY:self.currentScrollView.contentOffset.y];
-        [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
+        if (self.baseHeaderView.superview != self) {
+            [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
+        }
     }else {
         [self updateStaticItemOffY];
     }
@@ -180,7 +182,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
     self.currentScrollView = self.itemsArr[self.currentIndex];
     if (!self.tabBarHasStatic) {
-        [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
+        if (self.baseHeaderView.superview == self) {
+            [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
+        }
     }else {
         
         NSNumber * itemOffY = self.contentOffSetArr[_currentIndex];
@@ -196,6 +200,24 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (self.isScrollFromTabBarView) {
         [self scrollViewDidEndDecelerating:self.collectionView];
         self.isScrollFromTabBarView = NO;
+    }
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (scrollView != self.collectionView) {
+        return;
+    }
+    
+    // 处理快速滚动问题
+    CGFloat tempOffy = scrollView.contentOffset.x/scrollView.frame.size.width;
+    // 判断是否为整数
+    if (tempOffy != ceilf(tempOffy)) {
+        if (tempOffy>self.itemsArr.count-1 || tempOffy<0) {
+            return;
+        }
+        if (self.baseHeaderView.superview != self) {
+            [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
+        }
     }
 }
 
@@ -232,6 +254,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 
 - (void)UpdateHeaderAndTabBarViewForType:(SlideViewScrollStatus)type {
+    [self UpdateHeaderAndTabBarViewForType:type scrollView:nil];
+}
+
+- (void)UpdateHeaderAndTabBarViewForType:(SlideViewScrollStatus)type scrollView:(UIScrollView *)scrollView {
     
     if (self.collectionView.decelerating) {
         return;
@@ -251,7 +277,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         self.baseHeaderView.frame = frame;
         
     }else if (type == SlideViewScrollStatus_End) {
-        [self.currentScrollView addSubview:self.baseHeaderView];
+        if (scrollView) {
+            [scrollView addSubview:self.baseHeaderView];
+        }else {
+            [self.currentScrollView addSubview:self.baseHeaderView];
+        }
         
         frame.origin.y = -self.tableInsetHeight;
         self.baseHeaderView.frame = frame;
