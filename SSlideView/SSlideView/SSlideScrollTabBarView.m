@@ -14,11 +14,16 @@
 #define kSpaceH         10.
 
 #define kTag            1024
+#define KScreenWidth    [UIScreen mainScreen].bounds.size.width
+
 
 @interface SSlideScrollTabBarView ()<UIScrollViewDelegate>
 @property (nonatomic, strong) UIScrollView * scroll;
 @property (nonatomic, strong) NSMutableArray * titleArr;
 @property (nonatomic, strong) UIView * lineView;
+
+// 左右不移动的标题个数
+@property (nonatomic, assign) NSInteger countOfTitleMiddleUnAble;
 @end
 
 @implementation SSlideScrollTabBarView
@@ -39,7 +44,7 @@
     [self addSubview:self.lineView];
     self.lineView.frame = CGRectMake(0, CGRectGetHeight(self.frame)-0.5, CGRectGetWidth(self.frame), 0.5);
     
-    _countOfTitleMiddleUnAble = 1;
+    _countOfTitleMiddleUnAble = 0;
 }
 
 - (void)loadDataWithArr:(NSArray *)arr {
@@ -60,6 +65,11 @@
         
         CGFloat height = CGRectGetHeight(self.scroll.frame);
         CGSize size = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, height) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:btn.titleLabel.font} context:nil].size;
+        CGFloat currentWidth = CGRectGetWidth(self.scroll.frame) - kLeftSpace * (arr.count - 1) - kSpaceH - kRightSpace;
+        
+        if (currentWidth/arr.count > size.width) {
+            size.width = currentWidth/arr.count;
+        }
         
         CGRect frame = CGRectZero;
         if (!lastView) {
@@ -71,6 +81,10 @@
         btn.frame = frame;
         lastView = btn;
         [self.titleArr addObject:btn];
+        
+        if (CGRectGetMidX(lastView.frame) >= KScreenWidth/2 && _countOfTitleMiddleUnAble == 0) {
+            _countOfTitleMiddleUnAble = i;
+        }
     }
     self.scroll.contentSize = CGSizeMake(CGRectGetMaxX(lastView.frame)+kRightSpace, self.frame.size.height);
 }
@@ -106,12 +120,6 @@
         [self.scroll setContentOffset:CGPointMake(0, 0) animated:YES];
         return;
     }
-    if (index>self.titleArr.count-1-_countOfTitleMiddleUnAble) {
-        CGFloat tempWidth = self.scroll.contentSize.width;
-        CGFloat width = self.scroll.frame.size.width;
-        [self.scroll setContentOffset:CGPointMake(tempWidth-width, 0) animated:YES];
-        return;
-    }
     
     UIButton * btn = self.titleArr[index];
     CGFloat btnMiddle = CGRectGetMidX(btn.frame);
@@ -119,7 +127,17 @@
     CGFloat offX = btnMiddle - screenMiddle;
     
     CGFloat currentOffX = self.scroll.contentOffset.x;
-    [self.scroll setContentOffset:CGPointMake(currentOffX+offX, 0) animated:YES];
+    
+    if (self.scroll.contentSize.width - CGRectGetMidX(btn.frame) >= CGRectGetWidth(self.scroll.frame)/2) {
+        [self.scroll setContentOffset:CGPointMake(currentOffX+offX, 0) animated:YES];
+        return;
+    }
+    
+    CGFloat tempWidth = self.scroll.contentSize.width;
+    CGFloat width = self.scroll.frame.size.width;
+    [self.scroll setContentOffset:CGPointMake(tempWidth-width, 0) animated:YES];
+    return;
+    
 }
 
 - (void)slideViewScrollToIndex:(NSInteger)index {

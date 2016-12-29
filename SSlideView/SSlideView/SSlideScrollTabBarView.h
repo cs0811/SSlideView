@@ -10,11 +10,6 @@
 
 @interface SSlideScrollTabBarView : SSlideTabBarView
 
-/**
- 左右不移动的标题个数    (默认 1)
- */
-@property (nonatomic, assign) NSInteger countOfTitleMiddleUnAble;
-
 @property (nonatomic, strong) UIColor * unSelectedTitleColor;
 @property (nonatomic, strong) UIColor * selectedTitleColor;
 @property (nonatomic, strong) UIFont * titleFont;
