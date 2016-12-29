@@ -184,7 +184,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
     self.currentScrollView = self.itemsArr[self.currentIndex];
     if (!self.tabBarHasStatic) {
-        if (self.baseHeaderView.superview == self) {
+        if (!self.baseHeaderView.superview || self.baseHeaderView.superview == self) {
             [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
         }
     }else {
