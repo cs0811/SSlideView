@@ -112,6 +112,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:itemAtIndex:)]) {
         cell.tableView = (UITableView *)[self.delegate slideView:self itemAtIndex:indexPath.item];
         cell.tableView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
+        [cell.tableView setContentOffset:CGPointMake(0, -self.tableInsetHeight) animated:NO];
         [cell.tableView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
         if (self.refreshAtTabBarViewTop) {
             cell.tableView.mj_header.ignoredScrollViewContentInsetTop = self.tableInsetHeight;
