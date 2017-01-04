@@ -361,7 +361,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 // 移除监听
 - (void)removeItemsObserver {
     for (UIScrollView * tempScrollView in self.itemsArr) {
-        if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]] || tempScrollView == self.currentScrollView) {
+        if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]]) {
             continue;
         }
         [tempScrollView removeObserver:self forKeyPath:kContentOffset];
