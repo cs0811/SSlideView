@@ -295,7 +295,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }else if (type == SlideViewScrollStatus_StaticTabBar) {
         [self addSubview:self.baseHeaderView];
 
-        frame.origin.y = -CGRectGetHeight(self.headerView.frame);
+        frame.origin.y = -CGRectGetHeight(self.headerView.frame)+self.tabBarOffSetYToTop;
         self.baseHeaderView.frame = frame;
 
     }else if (type == SlideViewScrollStatus_StaticHeaderViewAndTabBar) {
@@ -316,14 +316,14 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     CGPoint point = [change[@"new"] CGPointValue];
     CGFloat offY = point.y;
     
-    if (offY >= -self.tabStaticHeight) {
+    if (offY >= -self.tabStaticHeight-self.tabBarOffSetYToTop) {
         // 悬停
         if (self.baseHeaderView.superview == self) {
             return;
         }
         self.tabBarHasStatic = YES;
         
-        if (self.currentScrollView.contentOffset.y >= -self.tabStaticHeight) {
+        if (self.currentScrollView.contentOffset.y >= -self.tabStaticHeight-self.tabBarOffSetYToTop) {
             [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticTabBar];
         }
         
@@ -337,7 +337,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
                 [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticHeaderViewAndTabBar];
             }
         }else {
-            if (self.currentScrollView.contentOffset.y < -self.tabStaticHeight) {
+            if (self.currentScrollView.contentOffset.y < -self.tabStaticHeight-self.tabBarOffSetYToTop) {
                 
                 if (self.baseHeaderView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
                     self.tabBarHasStatic = NO;
@@ -370,12 +370,12 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 
 - (void)setScrollView:(UIScrollView *)scrollView staticContentSetOffYWithNumber:(NSNumber *)itemOffY {
-    if (scrollView.contentOffset.y < -self.tabStaticHeight) {
-        if ([itemOffY isKindOfClass:[NSNumber class]] && itemOffY.floatValue >= -self.tabStaticHeight) {
+    if (scrollView.contentOffset.y < -self.tabStaticHeight-self.tabBarOffSetYToTop) {
+        if ([itemOffY isKindOfClass:[NSNumber class]] && itemOffY.floatValue >= -self.tabStaticHeight-self.tabBarOffSetYToTop) {
             // 恢复之前的 contentOffSet
             [scrollView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
         }else {
-            [scrollView setContentOffset:CGPointMake(0, -self.tabStaticHeight) animated:NO];
+            [scrollView setContentOffset:CGPointMake(0, -self.tabStaticHeight-self.tabBarOffSetYToTop) animated:NO];
         }
     }
 }

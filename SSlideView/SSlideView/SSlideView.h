@@ -45,7 +45,10 @@ typedef NS_ENUM(NSInteger, SSlideViewRefreshPosition) {
 
 @property (nonatomic, assign) BOOL bouncesEnable;       // （默认 YES）
 
-//@property (nonatomic, assign) CGFloat tabBarOffSetYToTop;   // eg. 0
+/**
+ 悬停时tabBar距离顶部的距离
+ */
+@property (nonatomic, assign) CGFloat tabBarOffSetYToTop;   // eg. 0
 
 - (void)reloadData;
 

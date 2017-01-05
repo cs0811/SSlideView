@@ -47,6 +47,7 @@
 //    slideView.bouncesEnable = NO;
 //    slideView.scrollEnable = NO;
     _slideView.refreshPosition = SSlideViewRefreshPosition_HeaderViewTop;
+//    _slideView.tabBarOffSetYToTop = 30;
     [self.view addSubview:_slideView];
     
     UIButton * btn = [UIButton buttonWithType:UIButtonTypeCustom];
