@@ -40,4 +40,6 @@
 
 @property (nonatomic, assign) BOOL bouncesEnable;       // （默认 YES）
 
+- (void)reloadData;
+
 @end

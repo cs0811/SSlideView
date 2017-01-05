@@ -21,6 +21,8 @@
 @property (nonatomic, strong) SSlideScrollTabBarView * tabBarView;
 @property (nonatomic, strong) UIView * headerView;
 
+@property (nonatomic, strong) SSlideView * slideView;
+
 @end
 
 @implementation ViewController
@@ -40,12 +42,23 @@
     
     [self.tabBarView loadDataWithArr:@[@"测试sdfsdfwesf",@"哈哈哈wefsfwewwe",@"不是sdfweewwer",@"你说sfwevfwefe"]];
     
-    SSlideView * slideView = [[SSlideView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height-64)];
-    slideView.delegate = self;
+    _slideView = [[SSlideView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height-64)];
+    _slideView.delegate = self;
 //    slideView.bouncesEnable = NO;
 //    slideView.scrollEnable = NO;
-    slideView.refreshAtTabBarViewTop = NO;
-    [self.view addSubview:slideView];
+    _slideView.refreshAtTabBarViewTop = NO;
+    [self.view addSubview:_slideView];
+    
+    UIButton * btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setTitle:@"refresh" forState:UIControlStateNormal];
+    [btn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    [btn addTarget:self action:@selector(refresh) forControlEvents:UIControlEventTouchUpInside];
+    btn.frame = CGRectMake(100, 300, 60, 30);
+    [self.view addSubview:btn];
+}
+
+- (void)refresh {
+    [self.tabBarView loadDataWithArr:@[@"测试",@"哈哈哈",@"不是sdfweewwer",@"你说sfwevfwefe"]];
 }
 
 #pragma mark SSlideViewDelegate 

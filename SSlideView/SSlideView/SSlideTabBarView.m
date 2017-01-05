@@ -8,6 +8,9 @@
 
 #import "SSlideTabBarView.h"
 
+@implementation SSlideTabBarBtn
+@end
+
 @interface SSlideTabBarView ()
 @end
 

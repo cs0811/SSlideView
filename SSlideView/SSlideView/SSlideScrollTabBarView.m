@@ -49,10 +49,11 @@
 
 - (void)loadDataWithArr:(NSArray *)arr {
     self.titleArr = [NSMutableArray arrayWithCapacity:arr.count];
+    [self removeAllBtns];
     
     UIView * lastView = nil;
     for (int i=0; i<arr.count; i++) {
-        UIButton * btn = [UIButton buttonWithType:UIButtonTypeCustom];
+        SSlideTabBarBtn * btn = [SSlideTabBarBtn buttonWithType:UIButtonTypeCustom];
         NSString * title = arr[i];
         [btn setTitle:title forState:UIControlStateNormal];
         btn.titleLabel.font = _titleFont?:[UIFont systemFontOfSize:14.];
@@ -89,6 +90,14 @@
     self.scroll.contentSize = CGSizeMake(CGRectGetMaxX(lastView.frame)+kRightSpace, self.frame.size.height);
 }
 
+- (void)removeAllBtns {
+    for (UIView * view in self.scroll.subviews) {
+        if ([view isKindOfClass:[SSlideTabBarBtn class]]) {
+            [view removeFromSuperview];
+        }
+    }
+}
+
 #pragma mark UIScrollViewDelegate
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
 }
@@ -96,18 +105,18 @@
 #pragma mark Action
 - (void)scrollToTitleAtIndex:(NSInteger)index {
     // need to overwrite
-    for (UIButton * btn  in self.titleArr) {
+    for (SSlideTabBarBtn * btn  in self.titleArr) {
         if (btn.selected) {
             btn.selected = NO;
         }
     }
     
-    UIButton * btn = self.titleArr[index];
+    SSlideTabBarBtn * btn = self.titleArr[index];
     btn.selected = YES;
     [self middleTitleAtIndex:index];
 }
 
-- (void)titleClick:(UIButton *)sender {
+- (void)titleClick:(SSlideTabBarBtn *)sender {
     NSInteger index = sender.tag-kTag;
     [self scrollToTitleAtIndex:index];
     [self slideViewScrollToIndex:index];
@@ -121,7 +130,7 @@
         return;
     }
     
-    UIButton * btn = self.titleArr[index];
+    SSlideTabBarBtn * btn = self.titleArr[index];
     CGFloat btnMiddle = CGRectGetMidX(btn.frame);
     CGFloat screenMiddle = self.scroll.contentOffset.x+self.scroll.frame.size.width/2;
     CGFloat offX = btnMiddle - screenMiddle;

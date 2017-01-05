@@ -32,6 +32,7 @@
     _tableView = tableView;
 }
 - (void)setTableBaseView:(UIView *)tableBaseView {
+    [_tableBaseView removeFromSuperview];
     tableBaseView.frame = self.bounds;
     _tableBaseView = tableBaseView;
     [self.contentView addSubview:_tableBaseView];

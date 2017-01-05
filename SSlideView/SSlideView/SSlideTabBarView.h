@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+@interface SSlideTabBarBtn : UIButton
+@end
+
 @class SSlideTabBarView;
 
 @protocol SSlideTabBarViewDelegate <NSObject>

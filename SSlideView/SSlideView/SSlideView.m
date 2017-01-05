@@ -380,6 +380,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
 }
 
+- (void)reloadData {
+    [self.collectionView reloadData];
+}
+
 #pragma mark getter
 - (UICollectionView *)collectionView {
     if (!_collectionView) {
