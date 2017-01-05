@@ -46,7 +46,7 @@
     _slideView.delegate = self;
 //    slideView.bouncesEnable = NO;
 //    slideView.scrollEnable = NO;
-    _slideView.refreshAtTabBarViewTop = NO;
+    _slideView.refreshPosition = SSlideViewRefreshPosition_HeaderViewTop;
     [self.view addSubview:_slideView];
     
     UIButton * btn = [UIButton buttonWithType:UIButtonTypeCustom];

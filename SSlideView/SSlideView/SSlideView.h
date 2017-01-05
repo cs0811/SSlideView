@@ -10,6 +10,11 @@
 #import "SSlideTabBarView.h"
 
 
+typedef NS_ENUM(NSInteger, SSlideViewRefreshPosition) {
+    SSlideViewRefreshPosition_HeaderViewTop = 0,
+    SSlideViewRefreshPosition_TabBarBottom ,
+};
+
 @class SSlideView;
 @protocol SSlideViewDelegate <NSObject>
 
@@ -27,9 +32,9 @@
 @interface SSlideView : UIView
 
 /**
- 是否在最顶部刷新       (默认 YES)
+ 刷新动画的位置
  */
-@property (nonatomic, assign) BOOL refreshAtTabBarViewTop;
+@property (nonatomic, assign) SSlideViewRefreshPosition refreshPosition;
 
 @property (nonatomic, weak) id<SSlideViewDelegate> delegate;
 
@@ -39,6 +44,8 @@
 @property (nonatomic, assign) BOOL scrollEnable;
 
 @property (nonatomic, assign) BOOL bouncesEnable;       // （默认 YES）
+
+//@property (nonatomic, assign) CGFloat tabBarOffSetYToTop;   // eg. 0
 
 - (void)reloadData;
 

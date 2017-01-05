@@ -73,7 +73,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.tabBarHasStatic = NO;
     self.animationCompleted = YES;
     self.loadFirst = YES;
-    self.refreshAtTabBarViewTop = YES;
+    self.refreshPosition = SSlideViewRefreshPosition_HeaderViewTop;
     self.scrollEnable = YES;
     self.bouncesEnable = YES;
     self.contentOffSetOverBordered = NO;
@@ -114,7 +114,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         cell.tableView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
         [cell.tableView setContentOffset:CGPointMake(0, -self.tableInsetHeight) animated:NO];
         [cell.tableView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
-        if (self.refreshAtTabBarViewTop) {
+        if (self.refreshPosition == SSlideViewRefreshPosition_HeaderViewTop) {
             cell.tableView.mj_header.ignoredScrollViewContentInsetTop = self.tableInsetHeight;
         }else {
             cell.tableView.mj_header.ignoredScrollViewContentInsetTop = 0;
@@ -329,7 +329,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         
     }else {
                 
-        if (offY<=-self.tableInsetHeight && !self.refreshAtTabBarViewTop) {
+        if (offY<=-self.tableInsetHeight && self.refreshPosition == SSlideViewRefreshPosition_TabBarBottom) {
 
             if (self.baseHeaderView.superview != self && self.animationCompleted && !self.isScrollFromTabBarView) {
                 self.tabBarHasStatic = NO;
