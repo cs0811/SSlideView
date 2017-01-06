@@ -10,7 +10,7 @@
 
 // 水平间距
 #define kSpaceH         40.
-#define kWidth          120.
+#define kWidth          80.
 
 #define kTag            2048
 
@@ -40,10 +40,11 @@
 
 - (void)loadDataWithArr:(NSArray *)arr {
     self.titleArr = [NSMutableArray arrayWithCapacity:arr.count];
-    
+    [self removeAllBtns];
+
     UIView * lastView = nil;
     for (int i=0; i<arr.count; i++) {
-        UIButton * btn = [UIButton buttonWithType:UIButtonTypeCustom];
+        SSlideTabBarBtn * btn = [SSlideTabBarBtn buttonWithType:UIButtonTypeCustom];
         NSString * title = arr[i];
         [btn setTitle:title forState:UIControlStateNormal];
         btn.titleLabel.font = _titleFont?:[UIFont systemFontOfSize:14.];
@@ -72,21 +73,28 @@
     }
 }
 
+- (void)removeAllBtns {
+    for (UIView * view in self.subviews) {
+        if ([view isKindOfClass:[SSlideTabBarBtn class]]) {
+            [view removeFromSuperview];
+        }
+    }
+}
 
 #pragma mark Action
 - (void)scrollToTitleAtIndex:(NSInteger)index {
     // need to overwrite
-    for (UIButton * btn  in self.titleArr) {
+    for (SSlideTabBarBtn * btn  in self.titleArr) {
         if (btn.selected) {
             btn.selected = NO;
         }
     }
     
-    UIButton * btn = self.titleArr[index];
+    SSlideTabBarBtn * btn = self.titleArr[index];
     btn.selected = YES;
 }
 
-- (void)titleClick:(UIButton *)sender {
+- (void)titleClick:(SSlideTabBarBtn *)sender {
     NSInteger index = sender.tag-kTag;
     [self scrollToTitleAtIndex:index];
     [self slideViewScrollToIndex:index];
