@@ -9,9 +9,7 @@
 #import "SSlideView.h"
 #import "SSlideViewCollectionCell.h"
 
-
 #define kContentOffset      @"contentOffset"
-
 
 typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     SlideViewScrollStatus_Begin = 0,    // 开始滚动 (水平)
@@ -20,7 +18,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     SlideViewScrollStatus_StaticHeaderViewAndTabBar ,       // 悬停TabBar与HeaderView
 };
 
-@interface SSlideView ()<UICollectionViewDelegate,UICollectionViewDataSource,SSlideTabBarViewDelegate>
+@interface SSlideView ()<UICollectionViewDelegate,UICollectionViewDataSource,SSlideViewCollectionCellDelegate,SSlideTabBarViewDelegate>
 {
     CGRect _collectionFrame;
 }
@@ -97,6 +95,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     SSlideViewCollectionCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:kSSlideViewCollectionCell forIndexPath:indexPath];
+    cell.delegate = self;
     
     self.tableInsetHeight = 0;
     
@@ -225,6 +224,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
             [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
         }
     }
+}
+
+#pragma mark SSlideViewCollectionCellDelegate
+- (void)removeCurrentScrollViewObserver:(UIScrollView *)scrollView {
+    [scrollView removeObserver:self forKeyPath:kContentOffset];
 }
 
 #pragma mark SSlideTabBarViewDelegate
