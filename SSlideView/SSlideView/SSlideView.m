@@ -380,7 +380,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (![scrollView isKindOfClass:[UIScrollView class]]) {
         return;
     }
-    if (scrollView.contentOffset.y < -self.tabStaticHeight-self.tabBarOffSetYToTop) {
+    if (scrollView.contentOffset.y <= -self.tabStaticHeight-self.tabBarOffSetYToTop) {
         if ([itemOffY isKindOfClass:[NSNumber class]] && itemOffY.floatValue >= -self.tabStaticHeight-self.tabBarOffSetYToTop) {
             // 恢复之前的 contentOffSet
             [scrollView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
