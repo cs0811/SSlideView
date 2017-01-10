@@ -236,12 +236,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (index == _currentIndex) {
         return;
     }
-    UIScrollView * scrollView = self.itemsArr[index];
-    NSIndexPath * indexPath = [NSIndexPath indexPathForItem:index inSection:0];
-    if (![scrollView isKindOfClass:[UIScrollView class]]) {
-        [self collectionView:self.collectionView cellForItemAtIndexPath:indexPath];
-    }
-    [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
+    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
     [self scrollViewWillBeginDragging:self.collectionView];
     self.isScrollFromTabBarView = YES;
 }
