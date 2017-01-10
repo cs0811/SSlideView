@@ -237,8 +237,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         return;
     }
     [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
-    [self scrollViewWillBeginDragging:self.collectionView];
-    self.isScrollFromTabBarView = YES;
+    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 0.25*NSEC_PER_SEC);
+    dispatch_after(time, dispatch_get_main_queue(), ^{
+        [self scrollViewWillBeginDragging:self.collectionView];
+        self.isScrollFromTabBarView = YES;
+    });
 }
 
 #pragma mark update
