@@ -46,7 +46,7 @@
     _slideView.delegate = self;
 //    slideView.bouncesEnable = NO;
 //    slideView.scrollEnable = NO;
-    _slideView.refreshPosition = SSlideViewRefreshPosition_HeaderViewTop;
+    _slideView.refreshPosition = SSlideViewRefreshPosition_TabBarBottom;
 //    _slideView.tabBarOffSetYToTop = 30;
     [self.view addSubview:_slideView];
     

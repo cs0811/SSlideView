@@ -37,7 +37,6 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 @property (nonatomic, assign) BOOL loadFirst;
 @property (nonatomic, assign) BOOL tabBarHasStatic;
 @property (nonatomic, assign) BOOL animationCompleted;
-@property (nonatomic, assign) BOOL isScrollFromTabBarView;
 @property (nonatomic, assign) BOOL contentOffSetOverBordered;
 @end
 
@@ -123,6 +122,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         if (indexPath.item == 0) {
             if (self.loadFirst) {
                 // 第一个scrollview 手动加上头视图
+                self.currentScrollView = cell.tableView;
                 [self scrollViewDidEndDecelerating:self.collectionView];
                 self.loadFirst = NO;
             }else {
@@ -150,6 +150,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         return;
     }
     self.currentScrollView = self.itemsArr[self.currentIndex];
+    if (![self.currentScrollView isKindOfClass:[UIScrollView class]]) {
+        return;
+    }
     if (!self.tabBarHasStatic) {
         [self updateAllItemOffY:self.currentScrollView.contentOffset.y];
         if (self.baseHeaderView.superview != self && !self.contentOffSetOverBordered) {
@@ -183,6 +186,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         return;
     }
     self.currentScrollView = self.itemsArr[self.currentIndex];
+    if (![self.currentScrollView isKindOfClass:[UIScrollView class]]) {
+        return;
+    }
     if (!self.tabBarHasStatic) {
         if (!self.baseHeaderView.superview || self.baseHeaderView.superview == self) {
             [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
@@ -196,13 +202,6 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     // 记录 contentOffSet
     [self.contentOffSetArr replaceObjectAtIndex:_currentIndex withObject:@(self.currentScrollView.contentOffset.y)];
     [self.tabBarView scrollToTitleAtIndex:_currentIndex];
-}
-
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
-    if (self.isScrollFromTabBarView) {
-        [self scrollViewDidEndDecelerating:self.collectionView];
-        self.isScrollFromTabBarView = NO;
-    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -236,12 +235,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (index == _currentIndex) {
         return;
     }
-    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
-    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 0.25*NSEC_PER_SEC);
-    dispatch_after(time, dispatch_get_main_queue(), ^{
-        [self scrollViewWillBeginDragging:self.collectionView];
-        self.isScrollFromTabBarView = YES;
-    });
+    [self scrollViewWillBeginDragging:self.collectionView];
+    [self.collectionView setContentOffset:CGPointMake(index * CGRectGetWidth(self.collectionView.frame), 0)];
+    [self.collectionView layoutIfNeeded];
+    [self scrollViewDidEndDecelerating:self.collectionView];
 }
 
 #pragma mark update
@@ -338,15 +335,15 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
                 
         if (offY<=-self.tableInsetHeight && self.refreshPosition == SSlideViewRefreshPosition_TabBarBottom) {
 
-            if (self.baseHeaderView.superview != self && self.animationCompleted && !self.isScrollFromTabBarView) {
+            if (self.baseHeaderView.superview != self && self.animationCompleted) {
                 self.tabBarHasStatic = NO;
 
                 [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticHeaderViewAndTabBar];
             }
         }else {
-            if (self.currentScrollView.contentOffset.y < -self.tabStaticHeight-self.tabBarOffSetYToTop) {
+            if (offY < -self.tabStaticHeight-self.tabBarOffSetYToTop) {
                 
-                if (self.baseHeaderView.superview == self && self.animationCompleted && !self.isScrollFromTabBarView) {
+                if (self.baseHeaderView.superview == self && self.animationCompleted) {
                     self.tabBarHasStatic = NO;
                     
                     [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
@@ -358,6 +355,10 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 
 - (void)handleCellForRow:(SSlideViewCollectionCell *)cell indexPath:(NSIndexPath *)indexPath {
     // 保证第一次出现的item的contentOffset和上一个一样
+    if (![self.currentScrollView isKindOfClass:[UIScrollView class]]) {
+        return;
+    }
+    
     if (self.tabBarHasStatic) {
         NSNumber * itemOffY = self.contentOffSetArr[indexPath.item];
         [self setScrollView:cell.tableView staticContentSetOffYWithNumber:itemOffY];

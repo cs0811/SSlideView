@@ -33,7 +33,9 @@
 }
 - (void)setTableBaseView:(UIView *)tableBaseView {
     if (self.delegate && [self.delegate respondsToSelector:@selector(removeCurrentScrollViewObserver:)]) {
-        [self.delegate removeCurrentScrollViewObserver:_tableView];
+        if (_tableView) {
+            [self.delegate removeCurrentScrollViewObserver:_tableView];
+        }
     }
     [_tableBaseView removeFromSuperview];
     tableBaseView.frame = self.bounds;
