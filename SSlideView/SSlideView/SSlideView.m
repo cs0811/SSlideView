@@ -84,6 +84,12 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (self.delegate && [self.delegate respondsToSelector:@selector(numberOfItemsInSSlideView:)]) {
         NSInteger count = [self.delegate numberOfItemsInSSlideView:self];
         self.itemsArr = [NSMutableArray arrayWithCapacity:count];
+        if (self.itemsArr.count != 0) {
+            [self.itemsArr removeAllObjects];
+        }
+        if (self.contentOffSetArr.count != 0) {
+            [self.contentOffSetArr removeAllObjects];
+        }
         for (int i=0; i<count; i++) {
             [self.itemsArr addObject:@""];
             [self.contentOffSetArr addObject:@""];
