@@ -111,24 +111,24 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         self.tabBarView = [self.delegate slideTabBarViewOfSSlideView:self];
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:itemSuperViewAtIndex:)]) {
-        cell.tableBaseView = [self.delegate slideView:self itemSuperViewAtIndex:indexPath.item];
+        cell.scrollBaseView = [self.delegate slideView:self itemSuperViewAtIndex:indexPath.item];
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:itemAtIndex:)]) {
-        cell.tableView = (UITableView *)[self.delegate slideView:self itemAtIndex:indexPath.item];
-        cell.tableView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
-        [cell.tableView setContentOffset:CGPointMake(0, -self.tableInsetHeight) animated:NO];
-        [cell.tableView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
+        cell.scrollView = [self.delegate slideView:self itemAtIndex:indexPath.item];
+        cell.scrollView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
+        [cell.scrollView setContentOffset:CGPointMake(0, -self.tableInsetHeight) animated:NO];
+        [cell.scrollView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
         if (self.refreshPosition == SSlideViewRefreshPosition_HeaderViewTop) {
-            cell.tableView.mj_header.ignoredScrollViewContentInsetTop = self.tableInsetHeight;
+            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = self.tableInsetHeight;
         }else {
-            cell.tableView.mj_header.ignoredScrollViewContentInsetTop = 0;
+            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = 0;
         }
-        [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.tableView];
+        [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.scrollView];
         
         if (indexPath.item == 0) {
             if (self.loadFirst) {
                 // 第一个scrollview 手动加上头视图
-                self.currentScrollView = cell.tableView;
+                self.currentScrollView = cell.scrollView;
                 [self scrollViewDidEndDecelerating:self.collectionView];
                 self.loadFirst = NO;
             }else {
@@ -367,9 +367,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     
     if (self.tabBarHasStatic) {
         NSNumber * itemOffY = self.contentOffSetArr[indexPath.item];
-        [self setScrollView:cell.tableView staticContentSetOffYWithNumber:itemOffY];
+        [self setScrollView:cell.scrollView staticContentSetOffYWithNumber:itemOffY];
     }else {
-        [cell.tableView setContentOffset:self.currentScrollView.contentOffset animated:NO];
+        [cell.scrollView setContentOffset:self.currentScrollView.contentOffset animated:NO];
     }
 }
 

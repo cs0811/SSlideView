@@ -20,8 +20,8 @@ static NSString * kSSlideViewCollectionCell = @"SSlideViewCollectionCell";
 
 @property (nonatomic, weak) id<SSlideViewCollectionCellDelegate> delegate;
 
-@property (nonatomic, strong) UITableView * tableView;
+@property (nonatomic, strong) UIScrollView * scrollView;
 
-@property (nonatomic, strong) UIView * tableBaseView;
+@property (nonatomic, strong) UIView * scrollBaseView;
 
 @end

@@ -27,20 +27,20 @@
 }
 
 #pragma mark getter
-- (void)setTableView:(UITableView *)tableView {
-    tableView.frame = self.bounds;
-    _tableView = tableView;
+- (void)setScrollView:(UIScrollView *)scrollView {
+    scrollView.frame = self.bounds;
+    _scrollView = scrollView;
 }
-- (void)setTableBaseView:(UIView *)tableBaseView {
+- (void)setScrollBaseView:(UIView *)scrollBaseView {
     if (self.delegate && [self.delegate respondsToSelector:@selector(removeCurrentScrollViewObserver:)]) {
-        if (_tableView) {
-            [self.delegate removeCurrentScrollViewObserver:_tableView];
+        if (_scrollView) {
+            [self.delegate removeCurrentScrollViewObserver:_scrollView];
         }
     }
-    [_tableBaseView removeFromSuperview];
-    tableBaseView.frame = self.bounds;
-    _tableBaseView = tableBaseView;
-    [self.contentView addSubview:_tableBaseView];
+    [_scrollBaseView removeFromSuperview];
+    scrollBaseView.frame = self.bounds;
+    _scrollBaseView = scrollBaseView;
+    [self.contentView addSubview:_scrollBaseView];
 }
 
 @end
