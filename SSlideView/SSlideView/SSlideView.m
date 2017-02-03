@@ -101,6 +101,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     SSlideViewCollectionCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:kSSlideViewCollectionCell forIndexPath:indexPath];
     cell.delegate = self;
+
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(SSlideViewCollectionCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
     
     self.tableInsetHeight = 0;
     
@@ -138,9 +143,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
             [self handleCellForRow:cell indexPath:indexPath];
         }
     }
-    
-    return cell;
 }
+
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
 }
@@ -241,10 +245,12 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     if (index == _currentIndex) {
         return;
     }
+    self.userInteractionEnabled = NO;
     [self scrollViewWillBeginDragging:self.collectionView];
     [self.collectionView setContentOffset:CGPointMake(index * CGRectGetWidth(self.collectionView.frame), 0)];
     [self.collectionView layoutIfNeeded];
     [self scrollViewDidEndDecelerating:self.collectionView];
+    self.userInteractionEnabled = YES;
 }
 
 #pragma mark update
