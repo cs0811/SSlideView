@@ -100,48 +100,16 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     SSlideViewCollectionCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:kSSlideViewCollectionCell forIndexPath:indexPath];
-    cell.delegate = self;
-
+    
+    [self setUpCellUIWithCell:cell indexPath:indexPath];
+    
     return cell;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(SSlideViewCollectionCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    self.tableInsetHeight = 0;
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(slideHeaderViewOfSSlideView:)]) {
-        self.headerView = [self.delegate slideHeaderViewOfSSlideView:self];
-    }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(slideTabBarViewOfSSlideView:)]) {
-        self.tabBarView = [self.delegate slideTabBarViewOfSSlideView:self];
-    }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:itemSuperViewAtIndex:)]) {
-        cell.scrollBaseView = [self.delegate slideView:self itemSuperViewAtIndex:indexPath.item];
-    }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:itemAtIndex:)]) {
-        cell.scrollView = [self.delegate slideView:self itemAtIndex:indexPath.item];
-        cell.scrollView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
-        [cell.scrollView setContentOffset:CGPointMake(0, -self.tableInsetHeight) animated:NO];
-        [cell.scrollView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
-        if (self.refreshPosition == SSlideViewRefreshPosition_HeaderViewTop) {
-            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = self.tableInsetHeight;
-        }else {
-            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = 0;
-        }
-        [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.scrollView];
-        
-        if (indexPath.item == 0) {
-            if (self.loadFirst) {
-                // 第一个scrollview 手动加上头视图
-                self.currentScrollView = cell.scrollView;
-                [self scrollViewDidEndDecelerating:self.collectionView];
-                self.loadFirst = NO;
-            }else {
-                [self handleCellForRow:cell indexPath:indexPath];
-            }
-        }else {
-            [self handleCellForRow:cell indexPath:indexPath];
-        }
+    if (!cell.scrollBaseView || cell.scrollBaseView.superview != cell.contentView) {
+        [self setUpCellUIWithCell:cell indexPath:indexPath];
     }
 }
 
@@ -399,6 +367,46 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
             [scrollView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
         }else {
             [scrollView setContentOffset:CGPointMake(0, -self.tabStaticHeight-self.tabBarOffSetYToTop) animated:NO];
+        }
+    }
+}
+
+- (void)setUpCellUIWithCell:(SSlideViewCollectionCell *)cell indexPath:(NSIndexPath *)indexPath {
+    cell.delegate = self;
+    self.tableInsetHeight = 0;
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(slideHeaderViewOfSSlideView:)]) {
+        self.headerView = [self.delegate slideHeaderViewOfSSlideView:self];
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(slideTabBarViewOfSSlideView:)]) {
+        self.tabBarView = [self.delegate slideTabBarViewOfSSlideView:self];
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:itemSuperViewAtIndex:)]) {
+        cell.scrollBaseView = [self.delegate slideView:self itemSuperViewAtIndex:indexPath.item];
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:itemAtIndex:)]) {
+        cell.scrollView = [self.delegate slideView:self itemAtIndex:indexPath.item];
+        cell.scrollView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
+        [cell.scrollView setContentOffset:CGPointMake(0, -self.tableInsetHeight) animated:NO];
+        [cell.scrollView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
+        if (self.refreshPosition == SSlideViewRefreshPosition_HeaderViewTop) {
+            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = self.tableInsetHeight;
+        }else {
+            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = 0;
+        }
+        [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.scrollView];
+        
+        if (indexPath.item == 0) {
+            if (self.loadFirst) {
+                // 第一个scrollview 手动加上头视图
+                self.currentScrollView = cell.scrollView;
+                [self scrollViewDidEndDecelerating:self.collectionView];
+                self.loadFirst = NO;
+            }else {
+                [self handleCellForRow:cell indexPath:indexPath];
+            }
+        }else {
+            [self handleCellForRow:cell indexPath:indexPath];
         }
     }
 }
