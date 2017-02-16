@@ -23,9 +23,27 @@
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     
+    // 动态创建
+    [self create3DTouchs:application];
+    
     return YES;
 }
 
+//
+- (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL))completionHandler {
+    
+    NSLog(@"3D Touch : %@",shortcutItem.type);
+    
+    [[[UIAlertView alloc] initWithTitle:shortcutItem.type message:nil delegate:self cancelButtonTitle:@"cancel" otherButtonTitles: nil] show];
+}
+
+
+- (void)create3DTouchs:(UIApplication *)application {
+    UIApplicationShortcutIcon * icon = [UIApplicationShortcutIcon iconWithType:UIApplicationShortcutIconTypeLove];
+    UIApplicationShortcutItem * item = [[UIApplicationShortcutItem alloc] initWithType:@"Love" localizedTitle:@"love~" localizedSubtitle:@"lv" icon:icon userInfo:nil];
+    
+    application.shortcutItems = @[item];
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

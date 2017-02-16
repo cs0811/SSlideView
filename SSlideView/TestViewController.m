@@ -8,8 +8,9 @@
 
 #import "TestViewController.h"
 #import "MJRefresh.h"
+#import "ViewController.h"
 
-@interface TestViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface TestViewController ()<UITableViewDelegate,UITableViewDataSource,UIViewControllerPreviewingDelegate>
 
 @end
 
@@ -49,10 +50,27 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"UITableViewCell"];
     cell.textLabel.text = [NSString stringWithFormat:@"%ld",indexPath.row];
+    
+    // 判断能否使用 peek功能
+    if ([self respondsToSelector:@selector(traitCollection)]) {
+        if ([self.traitCollection respondsToSelector:@selector(forceTouchCapability)]) {
+            if (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable) {
+                [self registerForPreviewingWithDelegate:self sourceView:cell];
+            }
+        }
+    }
+    
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"selectedIndex -- %ld",indexPath.row);
+}
+
+#pragma mark - UIViewControllerPreviewingDelegate
+- (UIViewController *)previewingContext:(id<UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
+    
+    ViewController * vc = [ViewController new];
+    return vc;
 }
 
 #pragma mark getter
