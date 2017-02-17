@@ -45,6 +45,17 @@
     application.shortcutItems = @[item];
 }
 
+
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    
+    if ([url.absoluteString hasPrefix:@"SSlideView://test"]) {
+        [[[UIAlertView alloc] initWithTitle:url.absoluteString message:nil delegate:self cancelButtonTitle:@"cancel" otherButtonTitles: nil] show];
+    }
+    
+    return YES;
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
