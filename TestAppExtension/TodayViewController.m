@@ -22,10 +22,15 @@
     
     [self.view addSubview:self.tableView];
     
+#ifdef __IPHONE_10_0 //因为是iOS10才有的，还请记得适配
+    //如果需要折叠
+    self.extensionContext.widgetLargestAvailableDisplayMode = NCWidgetDisplayModeExpanded;
+#endif
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    self.preferredContentSize = CGSizeMake(0, 200);
+//    self.preferredContentSize = CGSizeMake(0, 200);
 
 }
 
@@ -46,6 +51,18 @@
 
 - (UIEdgeInsets)widgetMarginInsetsForProposedMarginInsets:(UIEdgeInsets)defaultMarginInsets {
     return UIEdgeInsetsZero;
+}
+
+- (void)widgetActiveDisplayModeDidChange:(NCWidgetDisplayMode)activeDisplayMode withMaximumSize:(CGSize)maxSize {
+    if (activeDisplayMode == NCWidgetDisplayModeCompact) {
+        // 折叠
+        self.preferredContentSize = CGSizeMake(0, 200);
+
+    }else {
+        // 展开
+        self.preferredContentSize = CGSizeMake(0, 400);
+
+    }
 }
 
 
