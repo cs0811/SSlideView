@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D42AD7081EE7A6D5007EF2E0 /* BackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42AD7071EE7A6D5007EF2E0 /* BackViewController.m */; };
 		D4768BC31DE5372800078C32 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D4768BC21DE5372800078C32 /* main.m */; };
 		D4768BC61DE5372800078C32 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D4768BC51DE5372800078C32 /* AppDelegate.m */; };
 		D4768BC91DE5372800078C32 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4768BC81DE5372800078C32 /* ViewController.m */; };
@@ -53,6 +54,8 @@
 /* Begin PBXFileReference section */
 		51B6B60AB28701737A2F5B48 /* Pods-SSlideView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SSlideView.release.xcconfig"; path = "Pods/Target Support Files/Pods-SSlideView/Pods-SSlideView.release.xcconfig"; sourceTree = "<group>"; };
 		C28868754397AB2AC5FB0CD6 /* Pods-SSlideView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SSlideView.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SSlideView/Pods-SSlideView.debug.xcconfig"; sourceTree = "<group>"; };
+		D42AD7061EE7A6D5007EF2E0 /* BackViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackViewController.h; sourceTree = "<group>"; };
+		D42AD7071EE7A6D5007EF2E0 /* BackViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackViewController.m; sourceTree = "<group>"; };
 		D4768BBE1DE5372800078C32 /* SSlideView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SSlideView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4768BC21DE5372800078C32 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D4768BC41DE5372800078C32 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -151,6 +154,8 @@
 				D4E5B2E81E55AAC000E404DD /* SSlideView.entitlements */,
 				D4768BC41DE5372800078C32 /* AppDelegate.h */,
 				D4768BC51DE5372800078C32 /* AppDelegate.m */,
+				D42AD7061EE7A6D5007EF2E0 /* BackViewController.h */,
+				D42AD7071EE7A6D5007EF2E0 /* BackViewController.m */,
 				D4768BC71DE5372800078C32 /* ViewController.h */,
 				D4768BC81DE5372800078C32 /* ViewController.m */,
 				D4768BE11DE53C9A00078C32 /* TestViewController.h */,
@@ -376,6 +381,7 @@
 				D4D80FCF1DE860DC0070A570 /* SSlideView.m in Sources */,
 				D4768BC91DE5372800078C32 /* ViewController.m in Sources */,
 				D4768BC61DE5372800078C32 /* AppDelegate.m in Sources */,
+				D42AD7081EE7A6D5007EF2E0 /* BackViewController.m in Sources */,
 				D4D80FCD1DE860DC0070A570 /* SSlideTabBarView.m in Sources */,
 				D4768BC31DE5372800078C32 /* main.m in Sources */,
 			);
