@@ -13,6 +13,10 @@
 
 @implementation SSlideViewCollectionCell
 
+-(void)dealloc {
+    
+}
+
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {

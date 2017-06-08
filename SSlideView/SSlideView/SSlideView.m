@@ -349,13 +349,19 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 
 // 移除监听
 - (void)removeItemsObserver {
-    UIScrollView * tempScrollView;
-    for (SSlideViewCollectionCell *cell in self.collectionView.visibleCells) {
-        tempScrollView = cell.scrollView;
-        if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]]) {
-            continue;
+    [self handleSlideCellFromView:self.collectionView completion:^(SSlideViewCollectionCell *cell) {
+        [cell.scrollView removeObserver:self forKeyPath:kContentOffset];
+    }];
+}
+
+- (void)handleSlideCellFromView:(UIView *)topView completion:(void(^)(SSlideViewCollectionCell *))completion {
+    
+    for (UIView *view in topView.subviews) {
+        if (![view isKindOfClass:[SSlideViewCollectionCell class]]) {
+             [self handleSlideCellFromView:view completion:completion];
+        }else {
+            completion((SSlideViewCollectionCell *)view);
         }
-        [tempScrollView removeObserver:self forKeyPath:kContentOffset];
     }
 }
 
