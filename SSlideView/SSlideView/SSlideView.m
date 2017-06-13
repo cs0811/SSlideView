@@ -34,7 +34,6 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 
 @property (nonatomic, assign) CGFloat tableInsetHeight;
 @property (nonatomic, assign) CGFloat tabStaticHeight;
-@property (nonatomic, assign) BOOL loadFirst;
 @property (nonatomic, assign) BOOL tabBarHasStatic;
 @property (nonatomic, assign) BOOL animationCompleted;
 @property (nonatomic, assign) BOOL contentOffSetOverBordered;
@@ -69,7 +68,6 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     self.currentScrollView = self.itemsArr.firstObject;
     self.tabBarHasStatic = NO;
     self.animationCompleted = YES;
-    self.loadFirst = YES;
     self.refreshPosition = SSlideViewRefreshPosition_HeaderViewTop;
     self.scrollEnable = YES;
     self.bouncesEnable = YES;
@@ -404,18 +402,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         }
         [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.scrollView];
         
-        if (indexPath.item == 0) {
-            if (self.loadFirst) {
-                // 第一个scrollview 手动加上头视图
-                self.currentScrollView = cell.scrollView;
-                [self scrollViewDidEndDecelerating:self.collectionView];
-                self.loadFirst = NO;
-            }else {
-                [self handleCellForRow:cell indexPath:indexPath];
-            }
-        }else {
-            [self handleCellForRow:cell indexPath:indexPath];
-        }
+        [self handleCellForRow:cell indexPath:indexPath];
+        self.currentScrollView = cell.scrollView;
+        [self scrollViewDidEndDecelerating:self.collectionView];
     }
 }
 
