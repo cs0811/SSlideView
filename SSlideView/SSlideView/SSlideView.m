@@ -264,6 +264,9 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         frame.origin.y = -offY;
         self.baseHeaderView.frame = frame;
         
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
+        
     }else if (type == SlideViewScrollStatus_End) {
         if (scrollView) {
             [scrollView addSubview:self.baseHeaderView];
@@ -273,6 +276,11 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         
         frame.origin.y = -self.tableInsetHeight;
         self.baseHeaderView.frame = frame;
+        
+        [scrollView setNeedsLayout];
+        [scrollView layoutIfNeeded];
+        [self.currentScrollView setNeedsLayout];
+        [self.currentScrollView layoutIfNeeded];
 
     }else if (type == SlideViewScrollStatus_StaticTabBar) {
         [self addSubview:self.baseHeaderView];
@@ -280,11 +288,17 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         frame.origin.y = -CGRectGetHeight(self.headerView.frame)+self.tabBarOffSetYToTop;
         self.baseHeaderView.frame = frame;
 
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
+        
     }else if (type == SlideViewScrollStatus_StaticHeaderViewAndTabBar) {
         [self addSubview:self.baseHeaderView];
         
         frame.origin.y = 0;
         self.baseHeaderView.frame = frame;
+        
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
     }
 }
 
