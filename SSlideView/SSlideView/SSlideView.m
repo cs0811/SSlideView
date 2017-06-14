@@ -35,8 +35,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 @property (nonatomic, assign) CGFloat tableInsetHeight;
 @property (nonatomic, assign) CGFloat tabStaticHeight;
 @property (nonatomic, assign) BOOL tabBarHasStatic;
-@property (nonatomic, assign) BOOL animationCompleted;
 @property (nonatomic, assign) BOOL contentOffSetOverBordered;
+
 @end
 
 @implementation SSlideView
@@ -55,39 +55,33 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     [self removeItemsObserver];
 }
 
-#pragma mark loadBaseUI 
+#pragma mark - loadBaseUI
 - (void)loadBaseUI {
     self.userInteractionEnabled = YES;
     self.clipsToBounds = YES;
     self.backgroundColor = [UIColor whiteColor];
     [self addSubview:self.collectionView];
 }
+
 - (void)loadData {
-    self.itemsArr = [NSMutableArray array];
-    self.contentOffSetArr = [NSMutableArray array];
-    self.currentScrollView = self.itemsArr.firstObject;
     self.tabBarHasStatic = NO;
-    self.animationCompleted = YES;
     self.refreshPosition = SSlideViewRefreshPosition_HeaderViewTop;
     self.scrollEnable = YES;
     self.bouncesEnable = YES;
     self.contentOffSetOverBordered = NO;
 }
 
-#pragma mark UICollectionViewDataSource 
+#pragma mark - UICollectionViewDataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return 1;
 }
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(numberOfItemsInSSlideView:)]) {
+    if ([self.delegate respondsToSelector:@selector(numberOfItemsInSSlideView:)]) {
         NSInteger count = [self.delegate numberOfItemsInSSlideView:self];
         self.itemsArr = [NSMutableArray arrayWithCapacity:count];
-        if (self.itemsArr.count != 0) {
-            [self.itemsArr removeAllObjects];
-        }
-        if (self.contentOffSetArr.count != 0) {
-            [self.contentOffSetArr removeAllObjects];
-        }
+        self.contentOffSetArr = [NSMutableArray arrayWithCapacity:count];
+
         for (int i=0; i<count; i++) {
             [self.itemsArr addObject:@""];
             [self.contentOffSetArr addObject:@""];
@@ -96,88 +90,110 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
     return 0;
 }
+
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    
     SSlideViewCollectionCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:kSSlideViewCollectionCell forIndexPath:indexPath];
-    
-    [self setUpCellUIWithCell:cell indexPath:indexPath];
-    
     return cell;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(SSlideViewCollectionCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    if (!cell.scrollBaseView || cell.scrollBaseView.superview != cell.contentView) {
-        [self setUpCellUIWithCell:cell indexPath:indexPath];
-    }
+    [self willShowCell:cell indexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
 }
 
-#pragma mark UIScrollViewDelegate
+- (void)willShowCell:(SSlideViewCollectionCell *)cell indexPath:(NSIndexPath *)indexPath {
+    
+    cell.delegate = self;
+    self.tableInsetHeight = 0;
+    
+    if ([self.delegate respondsToSelector:@selector(slideHeaderViewOfSSlideView:)]) {
+        self.headerView = [self.delegate slideHeaderViewOfSSlideView:self];
+    }
+    if ([self.delegate respondsToSelector:@selector(slideTabBarViewOfSSlideView:)]) {
+        self.tabBarView = [self.delegate slideTabBarViewOfSSlideView:self];
+    }
+    if ([self.delegate respondsToSelector:@selector(slideView:itemSuperViewAtIndex:)]) {
+        cell.scrollBaseView = [self.delegate slideView:self itemSuperViewAtIndex:indexPath.item];
+    }
+    if ([self.delegate respondsToSelector:@selector(slideView:itemAtIndex:)]) {
+        cell.scrollView = [self.delegate slideView:self itemAtIndex:indexPath.item];
+        cell.scrollView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
+        [cell.scrollView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
+        if (self.refreshPosition == SSlideViewRefreshPosition_HeaderViewTop) {
+            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = self.tableInsetHeight;
+        }else {
+            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = 0;
+        }
+        
+        [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.scrollView];
+        
+        [self updateScrollViewContentOffSetWithCell:cell indexPath:indexPath];
+        if (!self.currentScrollView) {
+            self.currentScrollView = cell.scrollView;
+        }
+    }
+}
+
+#pragma mark - UIScrollViewDelegate
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    if (scrollView != self.collectionView) {
+    
+    self.currentIndex = scrollView.contentOffset.x/CGRectGetWidth(scrollView.frame);
+    if (self.currentIndex >= self.itemsArr.count) {
         return;
     }
     
-    _currentIndex = scrollView.contentOffset.x/CGRectGetWidth(scrollView.frame);
-    if (_currentIndex >= self.itemsArr.count) {
-        return;
-    }
-    self.currentScrollView = self.itemsArr[self.currentIndex];
-    if (![self.currentScrollView isKindOfClass:[UIScrollView class]]) {
-        return;
-    }
+    [self handleScrollViewWillBeginDragging];
+}
+
+- (void)handleScrollViewWillBeginDragging {
+    
     if (!self.tabBarHasStatic) {
-        [self updateAllItemOffY:self.currentScrollView.contentOffset.y];
-        if (self.baseHeaderView.superview != self && !self.contentOffSetOverBordered) {
-            [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
+        if (!self.contentOffSetOverBordered) {
+            [self updateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
         }
-    }else {
-        [self updateStaticItemOffY];
     }
-    self.animationCompleted = NO;
-    // 记录 contentOffSet
-    [self.contentOffSetArr replaceObjectAtIndex:_currentIndex withObject:@(self.currentScrollView.contentOffset.y)];
+    
+    // 记录当前的offset
+    CGFloat offset = self.currentScrollView.contentOffset.y;
+    [self.contentOffSetArr replaceObjectAtIndex:self.currentIndex withObject:@(offset)];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    if (scrollView != self.collectionView) {
-        return;
-    }
     
     NSInteger tempIndex = scrollView.contentOffset.x/CGRectGetWidth(scrollView.frame);
-    if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:didScrollToIndex:)]) {
+    if ( [self.delegate respondsToSelector:@selector(slideView:didScrollToIndex:)]) {
         if (tempIndex != _currentIndex) {
             [self.delegate slideView:self didScrollToIndex:tempIndex];
         }
     }
+    
     _currentIndex = tempIndex;
     if (_currentIndex >= self.itemsArr.count) {
         return;
     }
+    
     if (scrollView.isDragging || scrollView.isDecelerating) {
         // 拖拽结束才计算
         return;
     }
-    self.currentScrollView = self.itemsArr[self.currentIndex];
-    if (![self.currentScrollView isKindOfClass:[UIScrollView class]]) {
-        return;
-    }
-    if (!self.tabBarHasStatic) {
-        if (!self.baseHeaderView.superview || self.baseHeaderView.superview == self) {
-            [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
-        }
-    }else {
-        
-        NSNumber * itemOffY = self.contentOffSetArr[_currentIndex];
-        [self setScrollView:self.currentScrollView staticContentSetOffYWithNumber:itemOffY];
-    }
-    self.animationCompleted = YES;
-    // 记录 contentOffSet
-    [self.contentOffSetArr replaceObjectAtIndex:_currentIndex withObject:@(self.currentScrollView.contentOffset.y)];
+    
+    [self handleScrollViewDidEndDecelerating];
+    
     [self.tabBarView scrollToTitleAtIndex:_currentIndex];
+}
+
+- (void)handleScrollViewDidEndDecelerating {
+    
+    self.currentScrollView = self.itemsArr[_currentIndex];
+    
+    if (!self.tabBarHasStatic) {
+        [self updateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
+    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -196,62 +212,53 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     // 判断是否为整数
     if (tempOffy != ceilf(tempOffy)) {
         if (self.baseHeaderView.superview != self) {
-            [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
+            [self updateHeaderAndTabBarViewForType:SlideViewScrollStatus_Begin];
         }
     }
 }
 
-#pragma mark SSlideViewCollectionCellDelegate
+#pragma mark - SSlideViewCollectionCellDelegate
 - (void)removeCurrentScrollViewObserver:(UIScrollView *)scrollView {
     [scrollView removeObserver:self forKeyPath:kContentOffset];
 }
 
-#pragma mark SSlideTabBarViewDelegate
+#pragma mark - SSlideTabBarViewDelegate
 - (void)slideTabBar:(SSlideTabBarView *)slideTabBar didSelectedTitleOfIndex:(NSInteger)index {
     if (index == _currentIndex) {
         return;
     }
     self.userInteractionEnabled = NO;
-    [self scrollViewWillBeginDragging:self.collectionView];
+    
+    // 模拟开始拖到
+    [self handleScrollViewWillBeginDragging];
+    
     [self.collectionView setContentOffset:CGPointMake(index * CGRectGetWidth(self.collectionView.frame), 0)];
+    [self.collectionView setNeedsLayout];
     [self.collectionView layoutIfNeeded];
-    [self scrollViewDidEndDecelerating:self.collectionView];
+    
+    // 模拟 cellWillDisney
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
+    SSlideViewCollectionCell *cell = (SSlideViewCollectionCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+    if (!cell) {
+        cell = [self collectionView:self.collectionView cellForItemAtIndexPath:indexPath];
+    }
+    [self willShowCell:cell indexPath:indexPath];
+
+    _currentIndex = index;
+    // 模拟结束滚动
+    [self handleScrollViewDidEndDecelerating];
+        
     self.userInteractionEnabled = YES;
 }
 
-#pragma mark update
-- (void)updateAllItemOffY:(CGFloat)offy {
-    for (UIScrollView * tempScrollView in self.itemsArr) {
-        if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]] || tempScrollView == self.currentScrollView) {
-            continue;
-        }
-        [tempScrollView setContentOffset:CGPointMake(0, offy) animated:NO];
-    }
+#pragma mark - update
+- (void)updateHeaderAndTabBarViewForType:(SlideViewScrollStatus)type {
+    [self updateHeaderAndTabBarViewForType:type scrollView:nil];
 }
 
-- (void)updateStaticItemOffY {
-    for (int i=0; i<self.itemsArr.count; i++) {
-        UIScrollView * tempScrollView = self.itemsArr[i];
-        if (!tempScrollView || ![tempScrollView isKindOfClass:[UIScrollView class]] || tempScrollView == self.currentScrollView) {
-            continue;
-        }
-        
-        NSNumber * itemOffY = self.contentOffSetArr[i];
-        [self setScrollView:tempScrollView staticContentSetOffYWithNumber:itemOffY];
-    }
-}
-
-- (void)UpdateHeaderAndTabBarViewForType:(SlideViewScrollStatus)type {
-    [self UpdateHeaderAndTabBarViewForType:type scrollView:nil];
-}
-
-- (void)UpdateHeaderAndTabBarViewForType:(SlideViewScrollStatus)type scrollView:(UIScrollView *)scrollView {
+- (void)updateHeaderAndTabBarViewForType:(SlideViewScrollStatus)type scrollView:(UIScrollView *)scrollView {
     
     if (self.collectionView.decelerating) {
-        return;
-    }
-    
-    if (![self.currentScrollView isKindOfClass:[UIScrollView class]]) {
         return;
     }
     
@@ -276,12 +283,12 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         
         frame.origin.y = -self.tableInsetHeight;
         self.baseHeaderView.frame = frame;
-        
+
         [scrollView setNeedsLayout];
         [scrollView layoutIfNeeded];
         [self.currentScrollView setNeedsLayout];
         [self.currentScrollView layoutIfNeeded];
-
+        
     }else if (type == SlideViewScrollStatus_StaticTabBar) {
         [self addSubview:self.baseHeaderView];
 
@@ -290,7 +297,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 
         [self setNeedsLayout];
         [self layoutIfNeeded];
-        
+
     }else if (type == SlideViewScrollStatus_StaticHeaderViewAndTabBar) {
         [self addSubview:self.baseHeaderView];
         
@@ -302,12 +309,35 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
 }
 
-#pragma mark KVO
+- (void)updateAllOffset {
+    
+    NSMutableArray *arr = [NSMutableArray array];
+    
+    for (NSObject *obj in self.contentOffSetArr) {
+        if ([obj isKindOfClass:[NSNumber class]]) {
+            NSNumber *offset = (NSNumber *)obj;
+            offset = @(self.currentScrollView.contentOffset.y);
+            [arr addObject:offset];
+        }else {
+            [arr addObject:obj];
+        }
+    }
+    
+    self.contentOffSetArr = arr;
+}
+
+#pragma mark - KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     
     if (![keyPath isEqual:kContentOffset]) {
         return;
     }
+    
+    if (self.collectionView.isDragging) {
+        return;
+    }
+    
+    // 只处理被添加的scrollviewItem的滚动
     
     CGPoint point = [change[@"new"] CGPointValue];
     CGFloat offY = point.y;
@@ -320,34 +350,37 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         self.tabBarHasStatic = YES;
         
         if (self.currentScrollView.contentOffset.y >= -self.tabStaticHeight-self.tabBarOffSetYToTop) {
-            [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticTabBar];
+            [self updateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticTabBar];
         }
         
     }else {
                 
-        if (offY<=-self.tableInsetHeight && self.refreshPosition == SSlideViewRefreshPosition_TabBarBottom) {
-
-            if (self.baseHeaderView.superview != self && self.animationCompleted) {
+        if (offY<-self.tableInsetHeight && self.refreshPosition == SSlideViewRefreshPosition_TabBarBottom) {
+            // 控制刷新位置
+            if (self.baseHeaderView.superview != self) {
                 self.tabBarHasStatic = NO;
 
-                [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticHeaderViewAndTabBar];
+                [self updateHeaderAndTabBarViewForType:SlideViewScrollStatus_StaticHeaderViewAndTabBar];
             }
         }else {
             if (offY < -self.tabStaticHeight-self.tabBarOffSetYToTop) {
                 
-                if (self.baseHeaderView.superview == self && self.animationCompleted) {
+                if (self.baseHeaderView.superview == self || !self.baseHeaderView.superview) {
                     self.tabBarHasStatic = NO;
                     
-                    [self UpdateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
+                    [self updateHeaderAndTabBarViewForType:SlideViewScrollStatus_End scrollView:object];
                 }
             }
         }
     }
 }
 
-- (void)handleCellForRow:(SSlideViewCollectionCell *)cell indexPath:(NSIndexPath *)indexPath {
-    // 保证第一次出现的item的contentOffset和上一个一样
-    if (![self.currentScrollView isKindOfClass:[UIScrollView class]]) {
+- (void)updateScrollViewContentOffSetWithCell:(SSlideViewCollectionCell *)cell indexPath:(NSIndexPath *)indexPath {
+
+    CGFloat offset = self.currentScrollView.contentOffset.y;
+    if (!self.currentScrollView) {
+        offset = -self.tableInsetHeight;
+        [cell.scrollView setContentOffset:CGPointMake(0, offset) animated:NO];
         return;
     }
     
@@ -356,6 +389,8 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self setScrollView:cell.scrollView staticContentSetOffYWithNumber:itemOffY];
     }else {
         [cell.scrollView setContentOffset:self.currentScrollView.contentOffset animated:NO];
+        // 更新所有的offset
+        [self updateAllOffset];
     }
 }
 
@@ -378,47 +413,12 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
 }
 
 - (void)setScrollView:(UIScrollView *)scrollView staticContentSetOffYWithNumber:(NSNumber *)itemOffY {
-    if (![scrollView isKindOfClass:[UIScrollView class]]) {
-        return;
-    }
-    if (scrollView.contentOffset.y < -self.tabStaticHeight-self.tabBarOffSetYToTop) {
-        if ([itemOffY isKindOfClass:[NSNumber class]] && itemOffY.floatValue >= -self.tabStaticHeight-self.tabBarOffSetYToTop) {
-            // 恢复之前的 contentOffSet
-            [scrollView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
-        }else {
-            [scrollView setContentOffset:CGPointMake(0, -self.tabStaticHeight-self.tabBarOffSetYToTop) animated:NO];
-        }
-    }
-}
-
-- (void)setUpCellUIWithCell:(SSlideViewCollectionCell *)cell indexPath:(NSIndexPath *)indexPath {
-    cell.delegate = self;
-    self.tableInsetHeight = 0;
     
-    if (self.delegate && [self.delegate respondsToSelector:@selector(slideHeaderViewOfSSlideView:)]) {
-        self.headerView = [self.delegate slideHeaderViewOfSSlideView:self];
-    }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(slideTabBarViewOfSSlideView:)]) {
-        self.tabBarView = [self.delegate slideTabBarViewOfSSlideView:self];
-    }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:itemSuperViewAtIndex:)]) {
-        cell.scrollBaseView = [self.delegate slideView:self itemSuperViewAtIndex:indexPath.item];
-    }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(slideView:itemAtIndex:)]) {
-        cell.scrollView = [self.delegate slideView:self itemAtIndex:indexPath.item];
-        cell.scrollView.contentInset = UIEdgeInsetsMake(self.tableInsetHeight, 0, 0, 0);
-        [cell.scrollView setContentOffset:CGPointMake(0, -self.tableInsetHeight) animated:NO];
-        [cell.scrollView addObserver:self forKeyPath:kContentOffset options:NSKeyValueObservingOptionNew context:nil];
-        if (self.refreshPosition == SSlideViewRefreshPosition_HeaderViewTop) {
-            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = self.tableInsetHeight;
-        }else {
-            cell.scrollView.mj_header.ignoredScrollViewContentInsetTop = 0;
-        }
-        [self.itemsArr replaceObjectAtIndex:indexPath.item withObject:cell.scrollView];
-        
-        [self handleCellForRow:cell indexPath:indexPath];
-        self.currentScrollView = cell.scrollView;
-        [self scrollViewDidEndDecelerating:self.collectionView];
+    if ([itemOffY isKindOfClass:[NSNumber class]] && itemOffY.floatValue >= -self.tabStaticHeight-self.tabBarOffSetYToTop) {
+        // 恢复之前的 contentOffSet
+        [scrollView setContentOffset:CGPointMake(0, itemOffY.floatValue) animated:NO];
+    }else {
+        [scrollView setContentOffset:CGPointMake(0, -self.tabStaticHeight-self.tabBarOffSetYToTop) animated:NO];
     }
 }
 
@@ -426,7 +426,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     [self.collectionView reloadData];
 }
 
-#pragma mark getter
+#pragma mark - Getter
 - (UICollectionView *)collectionView {
     if (!_collectionView) {
         UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
@@ -446,6 +446,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     }
     return _collectionView;
 }
+
 - (UIView *)baseHeaderView {
     if (!_baseHeaderView) {
         UIView * view = [UIView new];
@@ -459,6 +460,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     _scrollEnable = scrollEnable;
     self.collectionView.scrollEnabled = _scrollEnable;
 }
+
 - (void)setBouncesEnable:(BOOL)bouncesEnable {
     _bouncesEnable = bouncesEnable;
     self.collectionView.bounces = _bouncesEnable;
@@ -470,6 +472,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
     [self.baseHeaderView addSubview:_headerView];
     self.tableInsetHeight += CGRectGetHeight(_headerView.frame);
 }
+
 - (void)setTabBarView:(SSlideTabBarView *)tabBarView {
     _tabBarView = tabBarView;
     _tabBarView.delegate = self;
