@@ -135,6 +135,7 @@ typedef NS_ENUM(NSInteger, SlideViewScrollStatus) {
         [self updateScrollViewContentOffSetWithCell:cell indexPath:indexPath];
         if (!self.currentScrollView) {
             self.currentScrollView = cell.scrollView;
+            [self updateHeaderAndTabBarViewForType:SlideViewScrollStatus_End];
         }
     }
 }
