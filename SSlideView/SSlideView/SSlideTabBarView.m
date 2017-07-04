@@ -31,6 +31,10 @@
 
 #pragma mark Action
 - (void)scrollToTitleAtIndex:(NSInteger)index {
+    
+}
+
+- (void)didClickTabAtIndex:(NSInteger)index {
     // need to overwrite
 }
 

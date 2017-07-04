@@ -82,6 +82,15 @@
 }
 
 #pragma mark Action
+- (void)didClickTabAtIndex:(NSInteger)index {
+    if (index > self.titleArr.count - 1) {
+        return;
+    }
+    
+    SSlideTabBarBtn * btn = self.titleArr[index];
+    [self titleClick:btn];
+}
+
 - (void)scrollToTitleAtIndex:(NSInteger)index {
     // need to overwrite
     for (SSlideTabBarBtn * btn  in self.titleArr) {

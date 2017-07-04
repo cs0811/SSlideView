@@ -26,12 +26,18 @@
 
 @property (nonatomic, weak) id<SSlideTabBarViewDelegate> delegate;
 
-
 /**
  滚动到指定title处
 
  @param index   need to overwrite
  */
 - (void)scrollToTitleAtIndex:(NSInteger)index;
+
+/**
+ 点击了某个tabbar
+ 
+ @param index   need to overwrite
+ */
+- (void)didClickTabAtIndex:(NSInteger)index;
 
 @end

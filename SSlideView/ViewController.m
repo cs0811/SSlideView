@@ -56,6 +56,12 @@
     [btn addTarget:self action:@selector(refresh) forControlEvents:UIControlEventTouchUpInside];
     btn.frame = CGRectMake(100, 300, 60, 30);
     [self.view addSubview:btn];
+    
+    [self.view setNeedsLayout];
+    [self.view layoutIfNeeded];
+    
+    [self.tabBarView didClickTabAtIndex:1];
+
 }
 
 - (void)refresh {
